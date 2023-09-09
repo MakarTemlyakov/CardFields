@@ -1,12 +1,26 @@
 
 
+import { useState } from 'react';
 import './index.css'
 
-function App() {
+import { FormField } from './components/FormField/FormFiled';
+import { Card } from './components/Card/Card';
 
+function App() {
+  const [isShowFormAdd, setShowFormAdd] = useState(false);
+
+
+  const onToggleAddForm = () => {
+    setShowFormAdd(() => !isShowFormAdd);
+  }
+
+  console.log(isShowFormAdd);
 
   return (
-    <div className='text-3xl'>sad</div>
+    <>
+      <Card onShowAddForm={onToggleAddForm} />
+      {isShowFormAdd && <FormField onShowAddForm={onToggleAddForm} />}
+    </>
   )
 }
 

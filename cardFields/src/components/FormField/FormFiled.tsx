@@ -1,24 +1,26 @@
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { FocusEvent, useState } from 'react';
 
-
-
 type Field = {
     isDirty: boolean;
     value: string;
-    color: "primary" | "error" | "success";
+    color: 'primary' | 'error' | 'success';
     isError: boolean;
-}
-
+};
 
 interface CustomField extends Record<string, unknown> {
     fieldName: Field;
     fieldValue: Field;
 }
 
-export const FormField = () => {
+type FormFieldProps = {
+    onShowAddForm: () => void;
+}
+
+
+export const FormField: React.FC<FormFieldProps> = ({ onShowAddForm }) => {
     const field = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } } as CustomField;
     const [values, setValues] = useState(field);
 
@@ -46,6 +48,7 @@ export const FormField = () => {
         const fieldValues = values;
         console.log(fieldValues);
         onResetForm();
+        onShowAddForm();
     }
 
     const onResetForm = () => {
@@ -77,19 +80,25 @@ export const FormField = () => {
     }
 
     return (
-
-        <form className='w-1/3 bg-white p-20 rounded-[4px] flex flex-col gap-5 items-center' >
-            <TextField onFocus={onFocus} error={values.fieldName.isError} color={values.fieldName.color} onBlur={onBlur} name="fieldName" id='outlinded-basic' label='Имя поля' variant='outlined' size='small' fullWidth onChange={onChangeEvent} value={values.fieldName.value} />
-            <TextField onFocus={onFocus} error={values.fieldValue.isError} color={values.fieldValue.color} onBlur={onBlur} name="fieldValue" id='outlinded-basic' label='Значение поля' variant='outlined' size='small' fullWidth onChange={onChangeEvent} value={values.fieldValue.value} />
-            <div className='flex flex-wrap justify-center gap-5 w-full lg:flex-nowrap' >
-                <Button variant="contained" color="success" fullWidth size='large' startIcon={<DoneIcon />} onClick={onSubmit} disabled={isDisabled()}>
-                    Success
-                </Button>
-                <Button variant="contained" color="info" fullWidth size='large' startIcon={<DeleteOutlineOutlinedIcon />} onClick={onResetForm} >
-                    Reset
-                </Button>
+        <div className="fixed bg-black/70 top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center z-10">
+            <div className='flex flex-col w-1/3 rounded-[4px] bg-white py-10 px-20 relative'>
+                <Typography variant='h5' mb='5px'>Форма добавления</Typography>
+                <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
+                <form className='flex flex-col gap-5 items-center' >
+                    <TextField onFocus={onFocus} error={values.fieldName.isError} color={values.fieldName.color} onBlur={onBlur} name="fieldName" id='outlinded-basic' label='Имя поля' variant='outlined' size='small' fullWidth onChange={onChangeEvent} value={values.fieldName.value} />
+                    <TextField onFocus={onFocus} error={values.fieldValue.isError} color={values.fieldValue.color} onBlur={onBlur} name="fieldValue" id='outlinded-basic' label='Значение поля' variant='outlined' size='small' fullWidth onChange={onChangeEvent} value={values.fieldValue.value} />
+                    <div className='flex flex-wrap justify-center gap-5 w-full lg:flex-nowrap' >
+                        <Button variant="contained" color="success" fullWidth size='large' startIcon={<DoneIcon />} onClick={onSubmit} disabled={isDisabled()}>
+                            Save Field
+                        </Button>
+                        <Button variant="contained" color="info" fullWidth size='large' startIcon={<DeleteOutlineOutlinedIcon />} onClick={onResetForm} >
+                            Reset Field
+                        </Button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+
 
     )
 }
