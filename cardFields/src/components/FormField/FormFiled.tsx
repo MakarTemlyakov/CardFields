@@ -1,7 +1,9 @@
 import { Button, TextField, Typography } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { FocusEvent, useState } from 'react';
+import { FocusEvent, useState, useContext } from 'react';
+import { DataField, FieldsDispatchContext } from '../../App';
+import { actions } from '../../actions/constatns';
 
 type Field = {
     isDirty: boolean;
@@ -16,20 +18,22 @@ interface CustomField extends Record<string, unknown> {
 }
 
 type FormFieldProps = {
-    onShowAddForm: () => void;
+    onToggleAddForm: () => void;
 }
 
+let nextId = 0;
 
-export const FormField: React.FC<FormFieldProps> = ({ onShowAddForm }) => {
-    const field = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } } as CustomField;
+export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
+    const dispatch = useContext(FieldsDispatchContext);
+    const field: CustomField = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } };
     const [values, setValues] = useState(field);
 
 
     const onChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fieldName: string = e.target.name;
-        const fieldValue: string = e.target.value;
+        const fieldName = e.target.name;
+        const fieldValue = e.target.value;
 
-        const field: Field = values[fieldName] as Field;
+        const field = values[fieldName] as Field;
         const isError = !fieldValue && field.isDirty;
 
         if (!fieldValue) {
@@ -45,10 +49,17 @@ export const FormField: React.FC<FormFieldProps> = ({ onShowAddForm }) => {
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const fieldValues = values;
-        console.log(fieldValues);
+        const field: DataField = { id: nextId++, name: values.fieldName.value, value: values.fieldValue.value };
+        dispatch({
+            type: actions.ADD,
+            payload: {
+                id: field.id,
+                name: field.name,
+                value: field.value,
+            }
+        })
         onResetForm();
-        onShowAddForm();
+        onToggleAddForm();
     }
 
     const onResetForm = () => {
