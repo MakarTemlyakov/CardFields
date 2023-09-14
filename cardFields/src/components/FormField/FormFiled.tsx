@@ -1,9 +1,10 @@
 import { Button, TextField, Typography } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { FocusEvent, useState, useContext } from 'react';
+import { FocusEvent, useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { DataField, FieldsDispatchContext } from '../../App';
 import { actions } from '../../actions/constatns';
+import CloseIcon from '@mui/icons-material/Close';
 
 type Field = {
     isDirty: boolean;
@@ -27,6 +28,23 @@ export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
     const dispatch = useContext(FieldsDispatchContext);
     const field: CustomField = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } };
     const [values, setValues] = useState(field);
+    const modalRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+
+        const onClickOutSide = (event: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                onToggleAddForm();
+            }
+        };
+
+        document.addEventListener('mousedown', onClickOutSide);
+
+        return () => document.removeEventListener('mousedown', onClickOutSide);
+
+    }, [onToggleAddForm]);
+
+
 
 
     const onChangeEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,8 +109,9 @@ export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
     }
 
     return (
-        <div className="fixed bg-black/70 top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center z-10">
-            <div className='flex flex-col w-1/3 rounded-[4px] bg-white py-10 px-20 relative'>
+        <div className="fixed bg-black/70 top-0 bottom-0 right-0 left-0 flex flex-col justify-center items-center z-10" >
+            <div className='flex flex-col w-1/3 rounded-[4px] bg-white py-10 px-20 relative' ref={modalRef}>
+                <CloseIcon className='absolute -top-5 -right-5 cursor-pointer' onClick={onToggleAddForm} />
                 <Typography variant='h5' mb='5px'>Форма добавления</Typography>
                 <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
                 <form className='flex flex-col gap-5 items-center' >

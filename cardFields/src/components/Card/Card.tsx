@@ -28,7 +28,6 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
         });
     }
 
-    console.log(fields)
     return (
         <main className='rounded-[4px] bg-white py-10 px-20  w-full h-full flex flex-col '>
             <Typography variant='h5' mb='5px'>Карточка</Typography>
