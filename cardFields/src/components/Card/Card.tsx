@@ -2,23 +2,24 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { DataField, FieldsContext, FieldsDispatchContext } from '../../App';
+import { CardsContext, CardsDispatchContex, DataField, FieldsContext, FieldsDispatchContext } from '../../App';
 import { useContext } from 'react';
 import { actions } from '../../actions/constatns';
 
 
 
 type CardProps = {
-    fields: DataField[];
     onShowAddForm: () => void;
 }
 
+let cardId = 0;
 export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
     const fields = useContext(FieldsContext);
-    const dispatch = useContext(FieldsDispatchContext);
+    const dispatchField = useContext(FieldsDispatchContext);
+    const dispatchCard = useContext(CardsDispatchContex);
 
     const onDeleteField = (field: DataField) => {
-        dispatch({
+        dispatchField({
             type: actions.DELETE,
             payload: {
                 id: field.id,
@@ -26,6 +27,16 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
                 value: field.value,
             }
         });
+    }
+
+    const onSaveCard = () => {
+        dispatchCard({
+            type: actions.SAVE_CARD,
+            payload: {
+                id: cardId++,
+                cardFields: fields,
+            }
+        })
     }
 
     return (
@@ -52,7 +63,7 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
                 ))}
                 <div className='flex gap-10 justify-center mt-auto'>
                     <Button variant="contained" size="large" color='error' className='p-30'>Отменить</Button>
-                    <Button variant="contained" size="large" color='success' className='p-30'>Сохранить</Button>
+                    <Button variant="contained" size="large" color='success' className='p-30' onClick={onSaveCard}>Сохранить</Button>
                 </div>
             </div>
         </main>

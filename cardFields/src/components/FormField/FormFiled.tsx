@@ -31,16 +31,18 @@ export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-
         const onClickOutSide = (event: MouseEvent) => {
+
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                console.log('yes');
                 onToggleAddForm();
             }
+            console.log('ywes');
         };
 
-        document.addEventListener('mousedown', onClickOutSide);
+        document.addEventListener('click', onClickOutSide, true);
 
-        return () => document.removeEventListener('mousedown', onClickOutSide);
+        return () => document.removeEventListener('click', onClickOutSide, true);
 
     }, [onToggleAddForm]);
 
