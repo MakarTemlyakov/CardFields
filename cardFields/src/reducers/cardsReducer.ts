@@ -3,45 +3,47 @@ import { actions } from '../actions/constatns';
 
 type Payload<T> = T;
 
-export type CardAction = {
-  type: string;
-  payload: Payload<DataCard>;
-};
-
 export type DataCard = {
   id: number;
   cardFields: DataField[];
 };
 
-export const cardsReducer = (cards: DataCard[], action: CardAction) => {
+export type CardAction = {
+  type: string;
+  payload: Payload<DataCard>;
+};
+
+interface CardsState {
+  cards: DataCard[];
+}
+
+export const initialCards: CardsState = {
+  cards: [],
+};
+
+export const cardsReducer = (state = initialCards, action: CardAction) => {
+  let newState = { ...state };
   switch (action.type) {
     case actions.SAVE_CARD: {
-      const newCards = [...cards];
-      const card = newCards.find((card) => card.id === action.payload.id);
+      const card = newState.cards.find((c) => c.id === action.payload.id);
       if (card) {
         const newCard = { ...card, cardFields: action.payload.cardFields };
-        // TODO: Изменить логику для измнения текущей карточки с существующим id
-        return newCards.map((card) => {
-          if (card.id === newCard.id) {
-            return {
-              id: newCard.id,
-              cardFields: newCard.cardFields,
-            };
-          } else {
-            return card;
-          }
-        });
+        newState.cards = state.cards.map((c) => (c.id === action.payload.id ? newCard : c));
+        newState = { cards: newState.cards };
+        return newState;
       } else {
-        return [
-          ...cards,
-          {
-            id: action.payload.id,
-            cardFields: action.payload.cardFields,
-          },
-        ];
+        newState = { cards: [action.payload] };
       }
+
+      return newState;
     }
+
+    case actions.TOGGLE_ADD_FORM: {
+      console.log('show');
+      return state;
+    }
+
     default:
-      return cards;
+      return state;
   }
 };

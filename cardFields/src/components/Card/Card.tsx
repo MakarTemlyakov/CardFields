@@ -2,18 +2,19 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { CardsContext, CardsDispatchContex, DataField, FieldsContext, FieldsDispatchContext } from '../../App';
+import { CardsDispatchContex, DataField, FieldsContext, FieldsDispatchContext } from '../../App';
 import { useContext } from 'react';
 import { actions } from '../../actions/constatns';
-
-
+import { DataCard } from '../../reducers/cardsReducer';
 
 type CardProps = {
     onShowAddForm: () => void;
+    card: DataCard;
 }
 
-let cardId = 0;
-export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
+
+
+export const Card: React.FC<CardProps> = ({ onShowAddForm, card }) => {
     const fields = useContext(FieldsContext);
     const dispatchField = useContext(FieldsDispatchContext);
     const dispatchCard = useContext(CardsDispatchContex);
@@ -33,9 +34,15 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
         dispatchCard({
             type: actions.SAVE_CARD,
             payload: {
-                id: cardId++,
+                id: 1,
                 cardFields: fields,
             }
+        })
+    }
+
+    const onToggleAddForm = () => {
+        dispatchCard({
+            type: actions.TOGGLE_ADD_FORM,
         })
     }
 
@@ -51,13 +58,13 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
                         <Button children={<Add />} variant="contained" size="small" color='success' onClick={() => onShowAddForm()} />
                     </div>
                 </div>
-                {fields.length > 0 && fields.map((field: DataField) => (
+                {card.cardFields.length > 0 && card.cardFields.map((field: DataField) => (
                     <div className='grid grid-cols-2' key={field.id}>
                         <Typography variant='h5' mb='5px' className='flex flex-1'>{field.name}:</Typography>
                         <div className='flex gap-2'>
                             <OutlinedInput size='small' value={field.value} />
                             <Button children={<RemoveIcon />} variant="contained" size="small" color='error' onClick={() => onDeleteField(field)} />
-                            <Button children={<Add />} variant="contained" size="small" color='success' onClick={() => onShowAddForm()} />
+                            <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                         </div>
                     </div>
                 ))}

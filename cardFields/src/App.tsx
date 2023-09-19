@@ -4,9 +4,9 @@ import { useState, createContext, useReducer, Dispatch } from 'react';
 import './index.css'
 
 import { FormField } from './components/FormField/FormFiled';
-import { Card } from './components/Card/Card';
 import { Action, fieldsRedcuer } from './reducers/fieldsReducer';
-import { DataCard, cardsReducer, CardAction } from './reducers/cardsReducer';
+import { cardsReducer, CardAction, initialCards } from './reducers/cardsReducer';
+import { Cards } from './components/Cards/Cards';
 
 export type DataField = {
   id: number;
@@ -15,10 +15,10 @@ export type DataField = {
 }
 
 const fields: DataField[] = [];
-const cards: DataCard[] = [];
+
 
 export const FieldsContext = createContext(fields);
-export const CardsContext = createContext(cards);
+export const CardsContext = createContext(initialCards);
 export const CardsDispatchContex = createContext<Dispatch<CardAction>>(() => { });
 export const FieldsDispatchContext = createContext<Dispatch<Action>>(() => { });
 
@@ -29,8 +29,9 @@ function App() {
   );
   const [cards, dispatchCard] = useReducer(
     cardsReducer,
-    []
+    initialCards
   );
+
   const [isShowFormAdd, setShowFormAdd] = useState(false);
 
   const onToggleAddForm = () => {
@@ -41,18 +42,18 @@ function App() {
   console.log(cards);
 
   return (
-    <>
+    <div className='w-4/5 flex flex-col grow m-auto p-5'>
       <FieldsContext.Provider value={fields}>
         <FieldsDispatchContext.Provider value={dispatchField}>
-          <CardsContext.Provider value={cards}>
+          <CardsContext.Provider value={initialCards}>
             <CardsDispatchContex.Provider value={dispatchCard}>
-              <Card onShowAddForm={onToggleAddForm} />
+              <Cards cards={cards.cards} />
               {isShowFormAdd && <FormField onToggleAddForm={onToggleAddForm} />}
             </CardsDispatchContex.Provider>
           </CardsContext.Provider>
         </FieldsDispatchContext.Provider>
       </FieldsContext.Provider>
-    </>
+    </div>
   )
 }
 
