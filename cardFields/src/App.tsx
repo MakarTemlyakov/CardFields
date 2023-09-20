@@ -6,7 +6,11 @@ import './index.css'
 import { FormField } from './components/FormField/FormFiled';
 import { Action, fieldsRedcuer } from './reducers/fieldsReducer';
 import { cardsReducer, CardAction, initialCards } from './reducers/cardsReducer';
-import { Cards } from './components/Cards/Cards';
+import { CardItems } from './components/CardItems/CardItems';
+import { Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+
 
 export type DataField = {
   id: number;
@@ -15,7 +19,6 @@ export type DataField = {
 }
 
 const fields: DataField[] = [];
-
 
 export const FieldsContext = createContext(fields);
 export const CardsContext = createContext(initialCards);
@@ -27,7 +30,7 @@ function App() {
     fieldsRedcuer,
     []
   );
-  const [cards, dispatchCard] = useReducer(
+  const [state, dispatchCard] = useReducer(
     cardsReducer,
     initialCards
   );
@@ -38,17 +41,17 @@ function App() {
     setShowFormAdd(() => !isShowFormAdd);
   }
 
-
-  console.log(cards);
-
   return (
-    <div className='w-4/5 flex flex-col grow m-auto p-5'>
+    <div className='w-4/5 flex flex-col grow m-auto mt-10'>
       <FieldsContext.Provider value={fields}>
         <FieldsDispatchContext.Provider value={dispatchField}>
-          <CardsContext.Provider value={initialCards}>
+          <CardsContext.Provider value={state}>
             <CardsDispatchContex.Provider value={dispatchCard}>
-              <Cards cards={cards.cards} />
-              {isShowFormAdd && <FormField onToggleAddForm={onToggleAddForm} />}
+              <div className="flex flex-col h-full items-start gap-5">
+                <Link to={'cards/create'}><Button variant='contained' color='primary'>ADD Card</Button></Link>
+                <CardItems cards={state.cards} />
+                {isShowFormAdd && <FormField onToggleAddForm={onToggleAddForm} />}
+              </div>
             </CardsDispatchContex.Provider>
           </CardsContext.Provider>
         </FieldsDispatchContext.Provider>

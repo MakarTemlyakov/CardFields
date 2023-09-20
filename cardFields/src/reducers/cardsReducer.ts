@@ -15,10 +15,12 @@ export type CardAction = {
 
 interface CardsState {
   cards: DataCard[];
+  isShowFormAdd: boolean;
 }
 
 export const initialCards: CardsState = {
   cards: [],
+  isShowFormAdd: false,
 };
 
 export const cardsReducer = (state = initialCards, action: CardAction) => {
@@ -29,18 +31,18 @@ export const cardsReducer = (state = initialCards, action: CardAction) => {
       if (card) {
         const newCard = { ...card, cardFields: action.payload.cardFields };
         newState.cards = state.cards.map((c) => (c.id === action.payload.id ? newCard : c));
-        newState = { cards: newState.cards };
+        newState = { ...newState, cards: newState.cards };
         return newState;
       } else {
-        newState = { cards: [action.payload] };
+        newState = { ...newState, cards: [action.payload] };
       }
 
       return newState;
     }
 
     case actions.TOGGLE_ADD_FORM: {
-      console.log('show');
-      return state;
+      console.log('uyes');
+      return { ...newState, isShowFormAdd: !newState.isShowFormAdd };
     }
 
     default:

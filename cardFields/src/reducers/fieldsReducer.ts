@@ -23,6 +23,7 @@ export const fieldsRedcuer = (fields: DataField[], action: Action) => {
     case actions.DELETE: {
       return [...fields].filter((field) => field.id !== action.payload.id);
     }
+
     default:
       return fields;
   }

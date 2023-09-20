@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { CardsDispatchContex, DataField, FieldsContext, FieldsDispatchContext } from '../../App';
+import { CardsContext, CardsDispatchContex, DataField, FieldsContext, FieldsDispatchContext } from '../../App';
 import { useContext } from 'react';
 import { actions } from '../../actions/constatns';
 import { DataCard } from '../../reducers/cardsReducer';
@@ -14,11 +14,13 @@ type CardProps = {
 
 
 
-export const Card: React.FC<CardProps> = ({ onShowAddForm, card }) => {
+export const Card: React.FC<CardProps> = ({ onShowAddForm }) => {
     const fields = useContext(FieldsContext);
     const dispatchField = useContext(FieldsDispatchContext);
     const dispatchCard = useContext(CardsDispatchContex);
-
+    const cards = useContext(CardsContext);
+    const card1 = cards.cards.find((card) => card.id === 1);
+    console.log(card1);
     const onDeleteField = (field: DataField) => {
         dispatchField({
             type: actions.DELETE,
@@ -43,6 +45,7 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm, card }) => {
     const onToggleAddForm = () => {
         dispatchCard({
             type: actions.TOGGLE_ADD_FORM,
+            payload: null,
         })
     }
 
@@ -55,10 +58,10 @@ export const Card: React.FC<CardProps> = ({ onShowAddForm, card }) => {
                     <Typography variant='h5' mb='5px'><span className='truncate'>Наименование карточки:</span></Typography>
                     <div className='flex gap-2'>
                         <OutlinedInput size='small' value={'192.168.1.1'} />
-                        <Button children={<Add />} variant="contained" size="small" color='success' onClick={() => onShowAddForm()} />
+                        <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                     </div>
                 </div>
-                {card.cardFields.length > 0 && card.cardFields.map((field: DataField) => (
+                {card1 && card1.cardFields.length > 0 && card1?.cardFields.map((field: DataField) => (
                     <div className='grid grid-cols-2' key={field.id}>
                         <Typography variant='h5' mb='5px' className='flex flex-1'>{field.name}:</Typography>
                         <div className='flex gap-2'>
