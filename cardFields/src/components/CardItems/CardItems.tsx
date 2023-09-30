@@ -1,20 +1,21 @@
-import { DataCard } from "../../reducers/cardsReducer"
+import { CardsContext } from "../../App";
+
+import { useContext } from 'react';
 import { CardItem } from "../CardItem/CardItem";
+import { Link, } from "react-router-dom";
 
 
-interface CardItemsProps {
-    cards: DataCard[];
-}
-
-export const CardItems: React.FC<CardItemsProps> = ({ cards }) => {
-    return <ul className="flex flex-col gap-2 w-full">
+export const CardItems = () => {
+    const { cards } = useContext(CardsContext);
+    console.log({ cards });
+    return <ul className="flex flex-col gap-2 w-full h-[60%] overflow-y-scroll ">
         {cards.length > 0 ?
             cards.map((card) => (
-                // <Card onShowAddForm={() => { }} card={card} key={card.id} />
-                <CardItem card={card} />
+                <Link to={`/cards/${card.id}`}><CardItem card={card} /></Link>
             )) : <div>Нет карточек</div>
         }
     </ul>
+
 
 }
 

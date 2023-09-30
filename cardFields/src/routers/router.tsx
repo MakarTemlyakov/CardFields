@@ -11,12 +11,11 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
       { path: '/cards', element: <CardItems /> },
-      { path: '/cards:cardsId', element: <Card /> },
-
+      { path: '/cards/:cardId', element: <Card /> },
+      { path: '/cards/create', element: <Card /> },
     ],
     errorElement: <div>Страница не найдена</div>
   },
-  { path: '/cards/create', element: <Card /> },
 ]);
 
 

@@ -5,6 +5,7 @@ type Payload<T> = T;
 
 export type DataCard = {
   id: number;
+  name: string;
   cardFields: DataField[];
 };
 
@@ -19,7 +20,16 @@ interface CardsState {
 }
 
 export const initialCards: CardsState = {
-  cards: [],
+  cards: [
+    { id: 3, name: 'name', cardFields: [] },
+    { id: 2, name: 'name', cardFields: [] },
+    { id: 1, name: 'name', cardFields: [] },
+    { id: 2, name: 'name', cardFields: [] },
+    { id: 1, name: 'name', cardFields: [] },
+    { id: 2, name: 'name', cardFields: [] },
+    { id: 1, name: 'name', cardFields: [] },
+    { id: 2, name: 'name', cardFields: [] },
+  ],
   isShowFormAdd: false,
 };
 
@@ -29,20 +39,20 @@ export const cardsReducer = (state = initialCards, action: CardAction) => {
     case actions.SAVE_CARD: {
       const card = newState.cards.find((c) => c.id === action.payload.id);
       if (card) {
-        const newCard = { ...card, cardFields: action.payload.cardFields };
+        const newCard = {
+          ...card,
+          cardFields: action.payload.cardFields,
+          name: action.payload.name,
+        };
         newState.cards = state.cards.map((c) => (c.id === action.payload.id ? newCard : c));
         newState = { ...newState, cards: newState.cards };
+        console.log({ newState });
         return newState;
       } else {
-        newState = { ...newState, cards: [action.payload] };
+        newState = { ...newState, cards: [...newState.cards, action.payload] };
       }
 
       return newState;
-    }
-
-    case actions.TOGGLE_ADD_FORM: {
-      console.log('uyes');
-      return { ...newState, isShowFormAdd: !newState.isShowFormAdd };
     }
 
     default:
