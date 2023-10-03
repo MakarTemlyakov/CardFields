@@ -20,16 +20,7 @@ interface CardsState {
 }
 
 export const initialCards: CardsState = {
-  cards: [
-    { id: 3, name: 'name', cardFields: [] },
-    { id: 2, name: 'name', cardFields: [] },
-    { id: 1, name: 'name', cardFields: [] },
-    { id: 2, name: 'name', cardFields: [] },
-    { id: 1, name: 'name', cardFields: [] },
-    { id: 2, name: 'name', cardFields: [] },
-    { id: 1, name: 'name', cardFields: [] },
-    { id: 2, name: 'name', cardFields: [] },
-  ],
+  cards: [],
   isShowFormAdd: false,
 };
 

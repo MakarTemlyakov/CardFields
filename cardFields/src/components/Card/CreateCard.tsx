@@ -1,32 +1,25 @@
-import { Button, Typography } from '@mui/material';
-import { OutlinedInput } from '@mui/material';
-import Add from '@mui/icons-material/Add';
+import { useContext, useState } from "react";
+
 import RemoveIcon from '@mui/icons-material/Remove';
-import { CardsContext, CardsDispatchContex, DataField } from '../../App';
-import { useContext, useState } from 'react';
-import { actions } from '../../actions/constatns';
-import { DataCard } from '../../reducers/cardsReducer';
-import { useParams } from 'react-router-dom';
-import { FormField } from '../FormField/FormFiled';
-
-type CardProps = {
-
-    card: DataCard;
-}
+import Add from "@mui/icons-material/Add";
+import { CardsContext, CardsDispatchContex, DataField } from "../../App";
+import { actions } from "../../actions/constatns";
+import { FormField } from "../FormField/FormFiled";
+import { Button, OutlinedInput, Typography } from "@mui/material";
+import { useGenerateId } from "../../utils/getUniqueId";
+import { useNavigate } from "react-router-dom";
 
 
-
-export const Card = () => {
-    const { cardId } = useParams();
+export const CreateCard = () => {
+    const [name, setName] = useState('');
     const [isShowForm, setToggleAddForm] = useState(false);
     const dispatchCard = useContext(CardsDispatchContex);
     const { cards } = useContext(CardsContext);
-    const card = cards.find((card) => card.id === +cardId!);
-    const [fields, setFields] = useState(card?.cardFields);
-    const [isDirty, setIsDirty] = useState(false);
-
+    const [fields, setFields] = useState<DataField[]>([]);
+    const id = useGenerateId(cards.length);
+    const navigate = useNavigate();
     const onDeleteField = (field: DataField) => {
-        setFields(fields?.filter((f) => f.id !== field.id));
+        setFields(fields?.filter((f: DataField) => f.id !== field.id));
     }
 
 
@@ -35,12 +28,12 @@ export const Card = () => {
         dispatchCard({
             type: actions.SAVE_CARD,
             payload: {
-                id: card!.id,
-                name: 'sad',
+                id: id,
+                name: name,
                 cardFields: fields!,
             }
         })
-        setIsDirty(true)
+        navigate(`/cards/${id}`);
     }
 
     const onToggleAddForm = () => {
@@ -52,7 +45,12 @@ export const Card = () => {
         onToggleAddForm();
     }
 
-    return card ? (
+    const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.value;
+        setName(name);
+    }
+
+    return (
         <main className='rounded-[4px] bg-white w-full flex flex-col '>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
             <Typography variant='h5' mb='5px'>Карточка</Typography>
@@ -61,7 +59,7 @@ export const Card = () => {
                 <div className='grid grid-cols-2'>
                     <Typography variant='h5' mb='5px'><span className='truncate'>Название:</span></Typography>
                     <div className='flex gap-2'>
-                        <OutlinedInput size='small' value={card?.name} />
+                        <OutlinedInput size='small' value={name} onChange={onChangeName} />
                         <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                     </div>
                 </div>
@@ -81,5 +79,5 @@ export const Card = () => {
                 <Button variant="contained" size="large" color='error' className='p-30'>Отменить</Button>
             </div>
         </main>
-    ) : <>Такой карточки нет</>
+    )
 }

@@ -20,24 +20,21 @@ interface CustomField extends Record<string, unknown> {
 
 type FormFieldProps = {
     onToggleAddForm: () => void;
+    onAddDataField: (field: DataField) => void;
 }
 
 let nextId = 0;
 
-export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
-    const dispatch = useContext(FieldsDispatchContext);
+export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm, onAddDataField }) => {
     const field: CustomField = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } };
     const [values, setValues] = useState(field);
     const modalRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const onClickOutSide = (event: MouseEvent) => {
-
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                console.log('yes');
                 onToggleAddForm();
             }
-            console.log('ywes');
         };
 
         document.addEventListener('click', onClickOutSide, true);
@@ -70,16 +67,8 @@ export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm }) => {
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         const field: DataField = { id: nextId++, name: values.fieldName.value, value: values.fieldValue.value };
-        dispatch({
-            type: actions.ADD,
-            payload: {
-                id: field.id,
-                name: field.name,
-                value: field.value,
-            }
-        })
         onResetForm();
-        onToggleAddForm();
+        onAddDataField(field);
     }
 
     const onResetForm = () => {
