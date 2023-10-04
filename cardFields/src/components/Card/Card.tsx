@@ -3,17 +3,10 @@ import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import { CardsContext, CardsDispatchContex, DataField } from '../../App';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { actions } from '../../actions/constatns';
-import { DataCard } from '../../reducers/cardsReducer';
 import { useParams } from 'react-router-dom';
 import { FormField } from '../FormField/FormFiled';
-
-type CardProps = {
-
-    card: DataCard;
-}
-
 
 
 export const Card = () => {
@@ -22,25 +15,31 @@ export const Card = () => {
     const dispatchCard = useContext(CardsDispatchContex);
     const { cards } = useContext(CardsContext);
     const card = cards.find((card) => card.id === +cardId!);
-    const [fields, setFields] = useState(card?.cardFields);
-    const [isDirty, setIsDirty] = useState(false);
+    const [name, setName] = useState('');
+    const [fields, setFields] = useState<DataField[]>([]);
+    const [isEditMode, setEditMode] = useState(false);
 
-    const onDeleteField = (field: DataField) => {
-        setFields(fields?.filter((f) => f.id !== field.id));
-    }
-
-
+    useEffect(() => {
+        if (card) {
+            setName(card.name);
+            setFields(card.cardFields);
+        }
+    }, [card]);
 
     const onSaveCard = () => {
         dispatchCard({
             type: actions.SAVE_CARD,
             payload: {
                 id: card!.id,
-                name: 'sad',
+                name: name!,
                 cardFields: fields!,
             }
         })
-        setIsDirty(true)
+        setEditMode(false);
+    }
+
+    const onDeleteField = (field: DataField) => {
+        setFields(fields?.filter((f) => f.id !== field.id));
     }
 
     const onToggleAddForm = () => {
@@ -52,34 +51,75 @@ export const Card = () => {
         onToggleAddForm();
     }
 
+    const onDeleteCard = (cardId: number) => {
+        dispatchCard({
+            type: actions.DELETE_CARD,
+            payload: {
+                id: cardId,
+                name: name!,
+                cardFields: fields!,
+            }
+        })
+    }
+
+    const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.value;
+        setName(name);
+    }
+
+    const onChangeValueField = (event: React.ChangeEvent<HTMLInputElement>, field: DataField) => {
+        const value = event.target.value;
+        const newFields = [...fields!].map((f) => f.id === field.id ? { ...field, value } : field);
+        setFields(newFields);
+    }
     return card ? (
         <main className='rounded-[4px] bg-white w-full flex flex-col '>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
-            <Typography variant='h5' mb='5px'>Карточка</Typography>
+            <Typography variant="h4" mb='5px' component="h1">Карточка</Typography>
             <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
             <div className='flex flex-col gap-10 w-1/2 ' >
                 <div className='grid grid-cols-2'>
-                    <Typography variant='h5' mb='5px'><span className='truncate'>Название:</span></Typography>
-                    <div className='flex gap-2'>
-                        <OutlinedInput size='small' value={card?.name} />
-                        <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
+                    <Typography variant='h5' mb='5px' component='p'><span className='truncate'>Название:</span></Typography>
+                    <div className='flex gap-2 items-center'>
+                        {isEditMode ?
+                            <>
+                                <OutlinedInput size='small' value={name} onChange={onChangeName} />
+                                <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
+                            </> :
+                            <Typography mb='5px' variant="h5" component="p" ><span className='truncate'>{card.name}</span></Typography>
+                        }
                     </div>
                 </div>
                 {fields && fields.length > 0 && fields.map((field: DataField) => (
                     <div className='grid grid-cols-2' key={field.id}>
                         <Typography variant='h5' mb='5px' className='flex flex-1'>{field.name}:</Typography>
-                        <div className='flex gap-2'>
-                            <OutlinedInput size='small' value={field.value} />
-                            <Button children={<RemoveIcon />} variant="contained" size="small" color='error' onClick={() => onDeleteField(field)} />
-                            <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
+                        <div className='flex gap-2 items-center'>
+                            {isEditMode ?
+                                <>
+                                    <OutlinedInput size='small' value={field.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValueField(event, field)} />
+                                    <Button children={<RemoveIcon />} variant="contained" size="small" color='error' onClick={() => onDeleteField(field)} />
+                                    <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
+                                </>
+                                :
+                                <Typography variant='h5' mb='5px' component='p'><span className='truncate'>{field.value}</span></Typography>
+                            }
                         </div>
                     </div>
                 ))}
             </div>
             <div className='flex gap-10 justify-center mt-auto'>
-                <Button variant="contained" size="large" color='success' className='p-30' onClick={onSaveCard}>Сохранить</Button>
-                <Button variant="contained" size="large" color='error' className='p-30'>Отменить</Button>
+                {isEditMode ?
+                    <>
+                        <Button variant="contained" size="large" color='success' className='p-30' onClick={onSaveCard}>Сохранить</Button>
+                        <Button variant="contained" size="large" color='error' className='p-30'>Отменить</Button>
+                    </>
+                    :
+                    <>
+                        <Button variant="contained" size="large" color='success' className='p-30' onClick={() => setEditMode(true)}>Редактировать</Button>
+                        <Button variant="contained" size="large" color='error' className='p-30' onClick={() => onDeleteCard(card?.id)}>Удалить</Button>
+                    </>
+                }
             </div>
-        </main>
+        </main >
     ) : <>Такой карточки нет</>
 }
