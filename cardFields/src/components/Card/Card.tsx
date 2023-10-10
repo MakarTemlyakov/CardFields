@@ -73,7 +73,7 @@ export const Card = () => {
         setFields(newFields);
     }
     return card ? (
-        <main className='rounded-[4px] bg-white w-full flex flex-col '>
+        <main className='rounded-[4px] bg-white w-full  flex flex-col min-h-screen '>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
             <Typography variant="h4" mb='5px' component="h1">Карточка</Typography>
             <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />

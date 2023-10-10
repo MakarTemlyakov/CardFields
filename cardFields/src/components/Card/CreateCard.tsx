@@ -18,11 +18,10 @@ export const CreateCard = () => {
     const [fields, setFields] = useState<DataField[]>([]);
     const id = useGenerateId(cards.length);
     const navigate = useNavigate();
+
     const onDeleteField = (field: DataField) => {
         setFields(fields?.filter((f: DataField) => f.id !== field.id));
     }
-
-
 
     const onSaveCard = () => {
         dispatchCard({
@@ -51,7 +50,7 @@ export const CreateCard = () => {
     }
 
     return (
-        <main className='rounded-[4px] bg-white w-full flex flex-col '>
+        <main className='rounded-[4px] bg-white w-full flex flex-col min-h-screen'>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
             <Typography variant='h5' mb='5px'>Карточка</Typography>
             <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
