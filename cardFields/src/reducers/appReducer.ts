@@ -1,5 +1,6 @@
 import { DataField } from '../App';
 import { actions } from '../actions/constatns';
+import { UserAccount } from '../service/firebaseService';
 
 type Payload<T> = T;
 
@@ -9,22 +10,30 @@ export type DataCard = {
   cardFields: DataField[];
 };
 
-export type CardAction = {
+export type Action = {
   type: string;
   payload: Payload<DataCard>;
 };
 
-interface CardsState {
+type UserAuth = {
+  user: UserAccount | null;
+};
+
+interface AppState {
+  user: UserAuth;
   cards: DataCard[];
   isShowFormAdd: boolean;
 }
 
-export const initialCards: CardsState = {
+export const initialAppState: AppState = {
   cards: [],
   isShowFormAdd: false,
+  user: {
+    user: null,
+  },
 };
 
-export const cardsReducer = (state = initialCards, action: CardAction) => {
+export const cardsReducer = (state = initialAppState, action: Action) => {
   let newState = { ...state };
   switch (action.type) {
     case actions.SAVE_CARD: {
@@ -37,7 +46,6 @@ export const cardsReducer = (state = initialCards, action: CardAction) => {
         };
         newState.cards = state.cards.map((c) => (c.id === action.payload.id ? newCard : c));
         newState = { ...newState, cards: newState.cards };
-        console.log({ newState });
         return newState;
       } else {
         newState = { ...newState, cards: [...newState.cards, action.payload] };
@@ -47,6 +55,10 @@ export const cardsReducer = (state = initialCards, action: CardAction) => {
     }
     case actions.DELETE_CARD: {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.id) };
+    }
+    case actions.SET_AUTH_USER_DATA: {
+      window.localStorage.setItem('user', JSON.stringify());
+      return;
     }
     default:
       return state;

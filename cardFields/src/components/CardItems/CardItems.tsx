@@ -3,7 +3,7 @@ import { CardsContext } from "../../App";
 import { useContext } from 'react';
 import { CardItem } from "../CardItem/CardItem";
 import { Link, } from "react-router-dom";
-import { DataCard } from "../../reducers/cardsReducer";
+import { DataCard } from "../../reducers/appReducer";
 
 
 

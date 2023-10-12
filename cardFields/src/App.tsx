@@ -3,9 +3,7 @@
 import { createContext, useReducer, Dispatch } from 'react';
 import './index.css'
 
-
-import { Action, fieldsRedcuer } from './reducers/fieldsReducer';
-import { cardsReducer, CardAction, initialCards } from './reducers/cardsReducer';
+import { cardsReducer, CardAction, initialCards } from './reducers/appReducer';
 import { CardItems } from './components/CardItems/CardItems';
 import { Button, TextField, } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
@@ -17,18 +15,10 @@ export type DataField = {
   value: string;
 }
 
-const fields: DataField[] = [];
-
-export const FieldsContext = createContext(fields);
 export const CardsContext = createContext(initialCards);
 export const CardsDispatchContex = createContext<Dispatch<CardAction>>(() => { });
-export const FieldsDispatchContext = createContext<Dispatch<Action>>(() => { });
 
 function App() {
-  const [fields, dispatchField] = useReducer(
-    fieldsRedcuer,
-    []
-  );
   const [state, dispatchCard] = useReducer(
     cardsReducer,
     initialCards

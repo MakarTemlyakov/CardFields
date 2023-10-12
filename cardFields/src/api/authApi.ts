@@ -1,4 +1,4 @@
-import { service } from '../service/firbaseStore';
+import { firebaseService } from '../service/firebaseService';
 
 export type User = {
   email: string;
@@ -7,7 +7,7 @@ export type User = {
 
 const authApi = {
   signIn: async (user: User) => {
-    return await service.signIn(user.email, user.password);
+    return await firebaseService.signIn(user.email, user.password);
   },
 };
 
