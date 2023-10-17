@@ -1,4 +1,4 @@
-import { CardsContext } from "../../App";
+import { AppContext } from "../../App";
 
 import { useContext } from 'react';
 import { CardItem } from "../CardItem/CardItem";
@@ -16,7 +16,7 @@ const cardList = (cards: DataCard[]) => {
 }
 
 export const CardItems = () => {
-    const { cards } = useContext(CardsContext);
+    const { cards } = useContext(AppContext);
     return <div className="">
         {cards.length > 0 ? cardList(cards) : <div>Нет карточек</div>}
     </div>

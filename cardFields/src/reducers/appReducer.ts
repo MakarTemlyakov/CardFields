@@ -10,55 +10,76 @@ export type DataCard = {
   cardFields: DataField[];
 };
 
-export type Action = {
-  type: string;
-  payload: Payload<DataCard>;
+export type User = {
+  email: string;
+  password: string;
 };
 
-type UserAuth = {
-  user: UserAccount | null;
+export type UserAuth = UserAccount | null;
+
+export type AppPayloadData = {
+  card?: DataCard | null;
+  user?: User | null;
+  userAuth?: UserAuth | null;
+};
+
+export type Action = {
+  type: string;
+  payload: Payload<AppPayloadData>;
 };
 
 interface AppState {
   user: UserAuth;
   cards: DataCard[];
   isShowFormAdd: boolean;
+  isAuth: boolean;
 }
 
 export const initialAppState: AppState = {
   cards: [],
   isShowFormAdd: false,
   user: {
-    user: null,
+    id: '',
+    email: null,
+    accessToken: '',
   },
+  isAuth: false,
 };
 
-export const cardsReducer = (state = initialAppState, action: Action) => {
+export const appReducer = (state: AppState, action: Action) => {
   let newState = { ...state };
+  console.log(state);
   switch (action.type) {
     case actions.SAVE_CARD: {
-      const card = newState.cards.find((c) => c.id === action.payload.id);
+      const card = newState.cards.find((c) => c.id === action.payload.card!.id);
       if (card) {
         const newCard = {
           ...card,
-          cardFields: action.payload.cardFields,
-          name: action.payload.name,
+          cardFields: action.payload.card!.cardFields,
+          name: action.payload.card!.name,
         };
-        newState.cards = state.cards.map((c) => (c.id === action.payload.id ? newCard : c));
+        newState.cards = state.cards.map((c) => (c.id === action.payload.card!.id ? newCard : c));
         newState = { ...newState, cards: newState.cards };
         return newState;
       } else {
-        newState = { ...newState, cards: [...newState.cards, action.payload] };
+        newState = { ...newState, cards: [...newState.cards, action.payload.card!] };
       }
 
       return newState;
     }
     case actions.DELETE_CARD: {
-      return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.id) };
+      return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };
     }
     case actions.SET_AUTH_USER_DATA: {
-      window.localStorage.setItem('user', JSON.stringify());
-      return;
+      const userPayload = action.payload.userAuth!;
+      window.localStorage.setItem('user', JSON.stringify(userPayload));
+      newState = { ...newState, user: userPayload, isAuth: true };
+      return newState;
+    }
+    case actions.SET_LOCAL_USER_DATA: {
+      const user = action.payload.userAuth!;
+      newState = { ...newState, user, isAuth: true };
+      return newState;
     }
     default:
       return state;

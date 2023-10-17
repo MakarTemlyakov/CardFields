@@ -2,19 +2,20 @@ import { useContext, useState } from "react";
 
 import RemoveIcon from '@mui/icons-material/Remove';
 import Add from "@mui/icons-material/Add";
-import { CardsContext, CardsDispatchContex, DataField } from "../../App";
+import { AppContext, AppDispatchContext, DataField } from "../../App";
 import { actions } from "../../actions/constatns";
 import { FormField } from "../FormField/FormFiled";
 import { Button, OutlinedInput, Typography } from "@mui/material";
 import { useGenerateId } from "../../utils/getUniqueId";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../../api/authApi";
 
 
 export const CreateCard = () => {
     const [name, setName] = useState('');
     const [isShowForm, setToggleAddForm] = useState(false);
-    const dispatchCard = useContext(CardsDispatchContex);
-    const { cards } = useContext(CardsContext);
+    const dispatchCard = useContext(AppDispatchContext);
+    const { cards } = useContext(AppContext);
     const [fields, setFields] = useState<DataField[]>([]);
     const id = useGenerateId(cards.length);
     const navigate = useNavigate();
@@ -27,9 +28,11 @@ export const CreateCard = () => {
         dispatchCard({
             type: actions.SAVE_CARD,
             payload: {
-                id: id,
-                name: name,
-                cardFields: fields!,
+                card: {
+                    id: id,
+                    name: name,
+                    cardFields: fields!,
+                }
             }
         })
         navigate(`/cards/${id}`);

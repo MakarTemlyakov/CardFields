@@ -1,5 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
+import { getDatabase, ref, set } from 'firebase/database';
 
 export type UserAccount = {
   id: string;
@@ -15,10 +16,12 @@ type UserResponse = {
 const firebaseConfig: FirebaseOptions = {
   projectId: PROJECT_ID,
   apiKey: FIRESTORE_API_KEY,
+  databaseURL: DB_URL,
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 const firebaseService = {
   signUp: async (email: string, password: string) => {
@@ -44,6 +47,13 @@ const firebaseService = {
       response = { user: null, error: 'Ошибка сервера' };
       return response;
     }
+  },
+
+  createCard: async (cardId: string, name: string) => {
+    const db = getDatabase();
+    await set(ref(db, 'cards/' + cardId), {
+      name,
+    });
   },
 };
 

@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { CardsContext, CardsDispatchContex, DataField } from '../../App';
+import { AppContext, AppDispatchContext, DataField } from '../../App';
 import { useContext, useState, useEffect } from 'react';
 import { actions } from '../../actions/constatns';
 import { useParams } from 'react-router-dom';
@@ -12,8 +12,8 @@ import { FormField } from '../FormField/FormFiled';
 export const Card = () => {
     const { cardId } = useParams();
     const [isShowForm, setToggleAddForm] = useState(false);
-    const dispatchCard = useContext(CardsDispatchContex);
-    const { cards } = useContext(CardsContext);
+    const dispatchCard = useContext(AppDispatchContext);
+    const { cards } = useContext(AppContext);
     const card = cards.find((card) => card.id === +cardId!);
     const [name, setName] = useState('');
     const [fields, setFields] = useState<DataField[]>([]);
@@ -30,10 +30,12 @@ export const Card = () => {
         dispatchCard({
             type: actions.SAVE_CARD,
             payload: {
-                id: card!.id,
-                name: name!,
-                cardFields: fields!,
-            }
+                card: {
+                    id: card!.id,
+                    name: name!,
+                    cardFields: fields!,
+                },
+            },
         })
         setEditMode(false);
     }
@@ -55,9 +57,11 @@ export const Card = () => {
         dispatchCard({
             type: actions.DELETE_CARD,
             payload: {
-                id: cardId,
-                name: name!,
-                cardFields: fields!,
+                card: {
+                    id: cardId,
+                    name: name!,
+                    cardFields: fields!,
+                }
             }
         })
     }
