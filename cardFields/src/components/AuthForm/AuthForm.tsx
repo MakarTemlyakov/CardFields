@@ -5,7 +5,7 @@ import { ChangeEvent, FormEvent, useState, useContext, useEffect } from 'react';
 import { AppDispatchContext } from '../../App';
 import { actions } from '../../actions/constatns';
 import { User } from '../../reducers/appReducer';
-import { authApi } from '../../api/authApi';
+import { firebaseApi } from '../../api/firebaseApi';
 import { useIsAuth } from '../../utils/useIsAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -26,7 +26,7 @@ export const AuthForm = () => {
 
     const signIn = async (user: User) => {
         setIsLoading(true);
-        const data = await authApi.signIn(user);
+        const data = await firebaseApi.signIn(user);
         dispatch({
             type: actions.SET_AUTH_USER_DATA,
             payload: {

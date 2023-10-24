@@ -5,23 +5,47 @@ import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { useState, useContext, useEffect } from 'react';
-import { AppContext } from '../../App';
+import { AppContext, AppDispatchContext } from '../../App';
 import { useIsAuth } from '../../utils/useIsAuth';
+import { firebaseApi } from '../../api/firebaseApi';
+import { actions } from '../../actions/constatns';
+
+import { DataCard } from '../../reducers/appReducer';
+
+
+
+export type OnLoadData = (payload: DataCard[]) => void;
 
 const MainPage = () => {
+    // const isAuth = useIsAuth();
+    const navigate = useNavigate();
     const [isProfileMenu, setIsProfileMenu] = useState(false);
-    const { user } = useContext(AppContext);
+    const { user, cards } = useContext(AppContext);
+    const dispatch = useContext(AppDispatchContext);
+
     const onChangeProfileMenu = () => {
         setIsProfileMenu((prev) => !prev);
     }
-    const isAuth = useIsAuth();
-    const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuth) {
-            navigate('/auth');
+        // if (!isAuth) {
+        //     navigate('/auth');
+        // }
+
+        const loadDataCards = async () => {
+            return await firebaseApi.getCards((cards: DataCard[]) => {
+                console.log({ load: cards })
+                dispatch({
+                    type: actions.SET_DATA_CARDS,
+                    payload: {
+                        cards,
+                    }
+                })
+            });
         }
-    }, [isAuth, navigate])
+
+        loadDataCards();
+    }, [dispatch]);
 
 
     return (<div className='flex flex-col'>
@@ -43,8 +67,8 @@ const MainPage = () => {
                         <TextField label="Search" variant='outlined' size='small' className='w-[70%]' />
                         <Link to={'/cards/create'} className="ml-auto"><Button variant="contained" color="info">ADD Card</Button></Link>
                     </div>
-                    <div className="bg-[lightgrey] rounded-sm  relative  h-1/4 p-2">
-                        <CardItems />
+                    <div className="bg-[lightgrey] rounded-sm  relative  h-[80%] p-2">
+                        {cards.length > 0 ? <CardItems cards={cards} /> : <>Соси</>}
                     </div>
                 </div>
                 <Outlet />

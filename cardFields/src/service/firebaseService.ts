@@ -1,6 +1,9 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
-import { getDatabase, ref, set } from 'firebase/database';
+import { remove, getDatabase, onValue, push, ref, update } from 'firebase/database';
+import { DataField } from '../App';
+import { DataCard } from '../reducers/appReducer';
+import { OnLoadData } from '../pages/MainPage/MainPage';
 
 export type UserAccount = {
   id: string;
@@ -21,7 +24,7 @@ const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getDatabase(app);
+export const db = getDatabase(app);
 
 const firebaseService = {
   signUp: async (email: string, password: string) => {
@@ -32,7 +35,7 @@ const firebaseService = {
 
     try {
       const responseData = await signInWithEmailAndPassword(auth, email, password);
-      const userData = await responseData.user;
+      const userData = responseData.user;
       const token = await responseData.user.getIdToken();
 
       const dataUser: UserAccount = {
@@ -49,11 +52,53 @@ const firebaseService = {
     }
   },
 
-  createCard: async (cardId: string, name: string) => {
-    const db = getDatabase();
-    await set(ref(db, 'cards/' + cardId), {
-      name,
+  getCardById: async (cardId: string) => {
+    const cardRef = ref(db, 'cards/' + cardId);
+    onValue(cardRef, (snapshot) => {
+      const data = snapshot.val();
+      console.log(data);
     });
+  },
+
+  getCards: async (onSetDataCards: OnLoadData) => {
+    const cardRef = ref(db, 'cards');
+
+    let data = [];
+
+    return onValue(cardRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const cards = snapshot.val();
+        data = Object.entries(snapshot.val()).map(([key]) => {
+          const cardsValues = cards[key];
+          return {
+            id: key,
+            ...cardsValues,
+          };
+        });
+        onSetDataCards(data);
+      }
+    });
+  },
+
+  createCard: async (name: string, cardFields: DataField[]) => {
+    const cardRef = await push(ref(db, 'cards/'), {
+      name,
+      cardFields,
+    });
+    const cardId = cardRef.key;
+    return cardId;
+  },
+
+  updateCardById: async (card: DataCard) => {
+    await update(ref(db, `cards/${card.id}`), {
+      name: card.name,
+      cardFields: card.cardFields,
+    });
+  },
+
+  deleteCardById: async (cardId: string) => {
+    const cardRef = ref(db, `cards/${cardId}`);
+    await remove(cardRef);
   },
 };
 

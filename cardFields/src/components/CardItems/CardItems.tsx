@@ -1,10 +1,6 @@
-import { AppContext } from "../../App";
-
-import { useContext } from 'react';
 import { CardItem } from "../CardItem/CardItem";
 import { Link, } from "react-router-dom";
 import { DataCard } from "../../reducers/appReducer";
-
 
 
 const cardList = (cards: DataCard[]) => {
@@ -15,8 +11,8 @@ const cardList = (cards: DataCard[]) => {
     </ul>
 }
 
-export const CardItems = () => {
-    const { cards } = useContext(AppContext);
+export const CardItems = ({ cards }) => {
+    console.log({ items: cards })
     return <div className="">
         {cards.length > 0 ? cardList(cards) : <div>Нет карточек</div>}
     </div>

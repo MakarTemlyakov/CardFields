@@ -5,7 +5,7 @@ import { UserAccount } from '../service/firebaseService';
 type Payload<T> = T;
 
 export type DataCard = {
-  id: number;
+  id: string;
   name: string;
   cardFields: DataField[];
 };
@@ -19,6 +19,7 @@ export type UserAuth = UserAccount | null;
 
 export type AppPayloadData = {
   card?: DataCard | null;
+  cards?: DataCard[] | null;
   user?: User | null;
   userAuth?: UserAuth | null;
 };
@@ -66,6 +67,10 @@ export const appReducer = (state: AppState, action: Action) => {
       }
 
       return newState;
+    }
+    case actions.SET_DATA_CARDS: {
+      console.log({ SET_DATA_CARDS: action.payload.cards });
+      return { ...newState, cards: action.payload.cards };
     }
     case actions.DELETE_CARD: {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };

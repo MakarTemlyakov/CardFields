@@ -1,41 +1,29 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import RemoveIcon from '@mui/icons-material/Remove';
 import Add from "@mui/icons-material/Add";
-import { AppContext, AppDispatchContext, DataField } from "../../App";
-import { actions } from "../../actions/constatns";
+import { DataField } from "../../App";
 import { FormField } from "../FormField/FormFiled";
 import { Button, OutlinedInput, Typography } from "@mui/material";
-import { useGenerateId } from "../../utils/getUniqueId";
 import { useNavigate } from "react-router-dom";
-import { authApi } from "../../api/authApi";
+import { firebaseApi } from "../../api/firebaseApi";
 
 
 export const CreateCard = () => {
     const [name, setName] = useState('');
     const [isShowForm, setToggleAddForm] = useState(false);
-    const dispatchCard = useContext(AppDispatchContext);
-    const { cards } = useContext(AppContext);
     const [fields, setFields] = useState<DataField[]>([]);
-    const id = useGenerateId(cards.length);
     const navigate = useNavigate();
 
     const onDeleteField = (field: DataField) => {
         setFields(fields?.filter((f: DataField) => f.id !== field.id));
     }
 
-    const onSaveCard = () => {
-        dispatchCard({
-            type: actions.SAVE_CARD,
-            payload: {
-                card: {
-                    id: id,
-                    name: name,
-                    cardFields: fields!,
-                }
-            }
-        })
-        navigate(`/cards/${id}`);
+    const onSaveCard = async () => {
+        const cardId = await firebaseApi.createCard(name, fields);
+        if (cardId) {
+            navigate(`/cards/${cardId}`);
+        }
     }
 
     const onToggleAddForm = () => {
@@ -54,7 +42,7 @@ export const CreateCard = () => {
 
     return (
         <main className='rounded-[4px] bg-white w-full flex flex-col min-h-screen'>
-            {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
+            {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} countFields={fields.length} />}
             <Typography variant='h5' mb='5px'>Карточка</Typography>
             <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
             <div className='flex flex-col gap-10 w-1/2 ' >

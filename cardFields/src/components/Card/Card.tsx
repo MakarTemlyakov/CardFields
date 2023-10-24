@@ -5,8 +5,9 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import { AppContext, AppDispatchContext, DataField } from '../../App';
 import { useContext, useState, useEffect } from 'react';
 import { actions } from '../../actions/constatns';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { FormField } from '../FormField/FormFiled';
+import { firebaseApi } from '../../api/firebaseApi';
 
 
 export const Card = () => {
@@ -14,11 +15,13 @@ export const Card = () => {
     const [isShowForm, setToggleAddForm] = useState(false);
     const dispatchCard = useContext(AppDispatchContext);
     const { cards } = useContext(AppContext);
-    const card = cards.find((card) => card.id === +cardId!);
+    const card = cards.find((card) => card.id === cardId!);
     const [name, setName] = useState('');
     const [fields, setFields] = useState<DataField[]>([]);
     const [isEditMode, setEditMode] = useState(false);
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    console.log({ location: location.pathname })
     useEffect(() => {
         if (card) {
             setName(card.name);
@@ -26,17 +29,23 @@ export const Card = () => {
         }
     }, [card]);
 
-    const onSaveCard = () => {
-        dispatchCard({
-            type: actions.SAVE_CARD,
-            payload: {
-                card: {
-                    id: card!.id,
-                    name: name!,
-                    cardFields: fields!,
-                },
-            },
-        })
+    const onSaveCard = async () => {
+        // dispatchCard({
+        //     type: actions.SAVE_CARD,
+        //     payload: {
+        //         card: {
+        //             id: card!.id,
+        //             name: name!,
+        //             cardFields: fields!,
+        //         },
+        //     },
+        // })
+        const updatedCard = {
+            id: card!.id,
+            name: name!,
+            cardFields: fields!,
+        }
+        await firebaseApi.updateCardById(updatedCard);
         setEditMode(false);
     }
 
@@ -53,17 +62,13 @@ export const Card = () => {
         onToggleAddForm();
     }
 
-    const onDeleteCard = (cardId: number) => {
-        dispatchCard({
-            type: actions.DELETE_CARD,
-            payload: {
-                card: {
-                    id: cardId,
-                    name: name!,
-                    cardFields: fields!,
-                }
-            }
-        })
+    const onDeleteCard = async (cardId: string) => {
+        await firebaseApi.deleteCardById(cardId);
+        const deletedCard = cards.find((card) => card.id === cardId);
+        if (deletedCard) {
+            const currentCardId = cards[cards.indexOf(deletedCard) - 1].id;
+            navigate(`../${currentCardId}`, { replace: true });
+        }
     }
 
     const onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,7 +83,7 @@ export const Card = () => {
     }
     return card ? (
         <main className='rounded-[4px] bg-white w-full  flex flex-col min-h-screen '>
-            {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} />}
+            {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} countFields={fields.length} />}
             <Typography variant="h4" mb='5px' component="h1">Карточка</Typography>
             <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
             <div className='flex flex-col gap-10 w-1/2 ' >

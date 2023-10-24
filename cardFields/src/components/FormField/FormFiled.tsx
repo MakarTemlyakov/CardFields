@@ -4,6 +4,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import { FocusEvent, useState, useEffect, useRef } from 'react';
 import { DataField, } from '../../App';
 import CloseIcon from '@mui/icons-material/Close';
+import { useGenerateId } from '../../utils/getUniqueId';
 
 type Field = {
     isDirty: boolean;
@@ -20,15 +21,16 @@ interface CustomField extends Record<string, unknown> {
 type FormFieldProps = {
     onToggleAddForm: () => void;
     onAddDataField: (field: DataField) => void;
+    countFields: number;
 }
 
-let nextId = 0;
 
-export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm, onAddDataField }) => {
+
+export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm, onAddDataField, countFields }) => {
     const field: CustomField = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } };
     const [values, setValues] = useState(field);
     const modalRef = useRef<HTMLDivElement>(null);
-
+    const id = useGenerateId(countFields);
     useEffect(() => {
         const onClickOutSide = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -65,7 +67,7 @@ export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm, onAddData
 
     const onSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const field: DataField = { id: nextId++, name: values.fieldName.value, value: values.fieldValue.value };
+        const field: DataField = { id, name: values.fieldName.value, value: values.fieldValue.value };
         onResetForm();
         onAddDataField(field);
     }
