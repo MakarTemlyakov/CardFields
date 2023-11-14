@@ -1,6 +1,11 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
-import { remove, getDatabase, onValue, push, ref, update } from 'firebase/database';
+import { remove, getDatabase, onValue, push, ref, set, update } from 'firebase/database';
 import { DataField } from '../App';
 import { DataCard } from '../reducers/appReducer';
 import { OnLoadData } from '../pages/MainPage/MainPage';
@@ -23,7 +28,8 @@ const firebaseConfig: FirebaseOptions = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+export const auth = getAuth(app);
+
 export const db = getDatabase(app);
 
 const firebaseService = {
@@ -47,57 +53,84 @@ const firebaseService = {
       response = { user: dataUser, error: null };
       return response;
     } catch (error) {
-      response = { user: null, error: 'Ошибка сервера' };
-      return response;
+      console.error(error);
+    }
+  },
+
+  loginOut: async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('error:', error);
     }
   },
 
   getCardById: async (cardId: string) => {
-    const cardRef = ref(db, 'cards/' + cardId);
-    onValue(cardRef, (snapshot) => {
-      const data = snapshot.val();
-      console.log(data);
-    });
+    try {
+      const currentUser = auth.currentUser?.uid;
+      const cardRef = ref(db, `${currentUser}/cards/` + cardId);
+      onValue(cardRef, (snapshot) => {
+        const data = snapshot.val();
+        console.log(data);
+      });
+    } catch (error) {
+      console.error('error:', error);
+    }
   },
 
   getCards: async (onSetDataCards: OnLoadData) => {
-    const cardRef = ref(db, 'cards');
-
     let data = [];
 
-    return onValue(cardRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const cards = snapshot.val();
-        data = Object.entries(snapshot.val()).map(([key]) => {
-          const cardsValues = cards[key];
-          return {
-            id: key,
-            ...cardsValues,
-          };
-        });
-        onSetDataCards(data);
-      }
-    });
+    try {
+      const currentUser = auth.currentUser?.uid;
+      const cardRef = ref(db, `${currentUser}/cards`);
+
+      return onValue(cardRef, (snapshot) => {
+        console.log(snapshot.exists());
+        if (snapshot.exists()) {
+          const cards = snapshot.val();
+          data = Object.entries(snapshot.val()).map(([key]) => {
+            const cardsValues = cards[key];
+            return {
+              id: key,
+              ...cardsValues,
+            };
+          });
+
+          onSetDataCards(data);
+        }
+      });
+    } catch (error) {
+      console.error('error', error);
+    }
   },
 
   createCard: async (name: string, cardFields: DataField[]) => {
-    const cardRef = await push(ref(db, 'cards/'), {
-      name,
-      cardFields,
-    });
-    const cardId = cardRef.key;
-    return cardId;
+    let createdCard: any = null;
+
+    try {
+      const currentUser = auth.currentUser?.uid;
+      const cardRef = ref(db, `${currentUser}/cards`);
+      createdCard = push(cardRef);
+      set(createdCard, { name, cardFields });
+    } catch (err) {
+      console.error('error:', err);
+    }
+
+    return createdCard.key;
   },
 
   updateCardById: async (card: DataCard) => {
-    await update(ref(db, `cards/${card.id}`), {
+    const currentUser = auth.currentUser?.uid;
+    await update(ref(db, `${currentUser}/cards/${card.id}`), {
       name: card.name,
       cardFields: card.cardFields,
     });
   },
 
   deleteCardById: async (cardId: string) => {
-    const cardRef = ref(db, `cards/${cardId}`);
+    const currentUser = auth.currentUser?.uid;
+    const cardRef = ref(db, `${currentUser}/cards/${cardId}`);
     await remove(cardRef);
   },
 };

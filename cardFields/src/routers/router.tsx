@@ -2,9 +2,9 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../App';
 import { Card } from '../components/Card/Card';
 import { CreateCard } from '../components/Card/CreateCard';
-import { AuthForm } from '../components/AuthForm/AuthForm';
 import { MainPage } from '../pages/MainPage/MainPage';
 import { Index } from '../components/Index/Index';
+import { AuthPage } from '../pages/AuthPage/AuthPage';
 
 
 
@@ -21,7 +21,7 @@ export const router = createBrowserRouter([
           { path: "create", element: <CreateCard /> },
         ]
       },
-      { path: '/auth', element: <AuthForm /> }
+      { path: '/auth', element: <AuthPage /> }
     ],
     errorElement: <div>Страница не найдена</div>
   },

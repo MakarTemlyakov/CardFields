@@ -27,10 +27,14 @@ type FormFieldProps = {
 
 
 export const FormField: React.FC<FormFieldProps> = ({ onToggleAddForm, onAddDataField, countFields }) => {
-    const field: CustomField = { fieldName: { isDirty: false, value: '', isError: false, color: 'primary' }, fieldValue: { isDirty: false, value: '', color: 'primary', isError: false } };
+    const field: CustomField = {
+        fieldName: { isDirty: false, value: '', isError: false, color: 'primary' },
+        fieldValue: { isDirty: false, value: '', color: 'primary', isError: false }
+    };
     const [values, setValues] = useState(field);
     const modalRef = useRef<HTMLDivElement>(null);
     const id = useGenerateId(countFields);
+
     useEffect(() => {
         const onClickOutSide = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {

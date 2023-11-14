@@ -2,10 +2,9 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { AppContext, AppDispatchContext, DataField } from '../../App';
+import { AppContext, DataField } from '../../App';
 import { useContext, useState, useEffect } from 'react';
-import { actions } from '../../actions/constatns';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { FormField } from '../FormField/FormFiled';
 import { firebaseApi } from '../../api/firebaseApi';
 
@@ -13,15 +12,13 @@ import { firebaseApi } from '../../api/firebaseApi';
 export const Card = () => {
     const { cardId } = useParams();
     const [isShowForm, setToggleAddForm] = useState(false);
-    const dispatchCard = useContext(AppDispatchContext);
     const { cards } = useContext(AppContext);
     const card = cards.find((card) => card.id === cardId!);
     const [name, setName] = useState('');
     const [fields, setFields] = useState<DataField[]>([]);
     const [isEditMode, setEditMode] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
-    console.log({ location: location.pathname })
+
     useEffect(() => {
         if (card) {
             setName(card.name);
@@ -30,16 +27,6 @@ export const Card = () => {
     }, [card]);
 
     const onSaveCard = async () => {
-        // dispatchCard({
-        //     type: actions.SAVE_CARD,
-        //     payload: {
-        //         card: {
-        //             id: card!.id,
-        //             name: name!,
-        //             cardFields: fields!,
-        //         },
-        //     },
-        // })
         const updatedCard = {
             id: card!.id,
             name: name!,

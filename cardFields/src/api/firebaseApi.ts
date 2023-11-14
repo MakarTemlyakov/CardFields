@@ -11,6 +11,8 @@ export type User = {
 const firebaseApi = {
   signIn: async (user: User) => await firebaseService.signIn(user.email, user.password),
 
+  loginOut: async () => await firebaseService.loginOut(),
+
   createCard: async (name: string, cardFields: DataField[]) =>
     await firebaseService.createCard(name, cardFields),
 

@@ -1,22 +1,39 @@
-import { useContext, useEffect } from 'react';
-import { AppContext, AppDispatchContext } from '../App';
+import { useContext, useEffect, useState } from 'react';
+import { AppDispatchContext } from '../App';
 import { actions } from '../actions/constatns';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../service/firebaseService';
+
+
+
+
+const userData: any = null;
 
 export const useIsAuth = () => {
-    const { isAuth } = useContext(AppContext);
     const dispatch = useContext(AppDispatchContext);
-    const storageUser = window.localStorage.getItem('user');
+    const [currentUser, setCurrentUser] = useState(userData);
 
     useEffect(() => {
-        if (!isAuth && storageUser) {
-            dispatch({
-                type: actions.SET_LOCAL_USER_DATA,
-                payload: {
-                    userAuth: JSON.parse(storageUser),
-                }
-            });
-        }
-    }, [storageUser, isAuth, dispatch]);
+        return onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                setCurrentUser(user.uid);
+                dispatch({
+                    type: actions.AUTH_USER,
+                    payload: {
+                        userAuth: {
+                            id: user.uid,
+                            email: user.email,
+                            accessToken: await user.getIdToken(),
+                        },
+                    }
+                });
 
-    return isAuth;
+            } else {
+                setCurrentUser(null);
+            }
+        });
+
+    }, [dispatch]);
+
+    return currentUser;
 }

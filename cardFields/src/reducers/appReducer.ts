@@ -47,7 +47,7 @@ export const initialAppState: AppState = {
   isAuth: false,
 };
 
-export const appReducer = (state: AppState, action: Action) => {
+export const appReducer = (state: AppState, action: Action): AppState => {
   let newState = { ...state };
   console.log(state);
   switch (action.type) {
@@ -70,22 +70,22 @@ export const appReducer = (state: AppState, action: Action) => {
     }
     case actions.SET_DATA_CARDS: {
       console.log({ SET_DATA_CARDS: action.payload.cards });
-      return { ...newState, cards: action.payload.cards };
+      return { ...newState, cards: action.payload.cards! };
     }
     case actions.DELETE_CARD: {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };
     }
-    case actions.SET_AUTH_USER_DATA: {
+    case actions.AUTH_USER: {
       const userPayload = action.payload.userAuth!;
-      window.localStorage.setItem('user', JSON.stringify(userPayload));
       newState = { ...newState, user: userPayload, isAuth: true };
       return newState;
     }
-    case actions.SET_LOCAL_USER_DATA: {
-      const user = action.payload.userAuth!;
-      newState = { ...newState, user, isAuth: true };
+
+    case actions.SIGN_OUT_USER: {
+      newState = { ...newState, user: { id: '', email: '', accessToken: '' }, isAuth: false };
       return newState;
     }
+
     default:
       return state;
   }
