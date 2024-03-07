@@ -41,7 +41,7 @@ const MainPage = () => {
                         }
                     })
                 });
-                setIsLoading(false);
+                setTimeout(() => setIsLoading(false), 3000);
             }
 
         }
@@ -78,12 +78,12 @@ const MainPage = () => {
                             </ul>
                         }
                     </div>
-                    <div className='flex relative -z-0 items-center'>
-                        <TextField label="Search" variant='outlined' size='small' className='w-[70%]' />
-                        <Link to={'/cards/create'} className="ml-auto"><Button variant="contained" color="info">ADD Card</Button></Link>
+                    <div className='flex flex-col gap-2 relative -z-0'>
+                        <TextField label="Search" variant='outlined' size='small' className='w-full' />
+                        <Link to={'/cards/create'} ><Button variant="contained" color="info" className='min-w-full' size='large'>ADD Card</Button></Link>
                     </div>
                     <div className="bg-[lightgrey] rounded-sm  relative  h-[80%] p-2">
-                        {!isLoading && cards.length > 0 ? <CardItems cards={cards} /> : <Loader />}
+                        {isLoading ? <Loader /> : !isLoading && cards.length > 0 ? <CardItems cards={cards} /> : "ytn"}
                     </div>
                 </div>
                 <Outlet />

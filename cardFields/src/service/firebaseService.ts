@@ -21,6 +21,10 @@ type UserResponse = {
   error: string | null;
 };
 
+const PROJECT_ID = "customfields-1eb2e";
+const FIRESTORE_API_KEY = "AIzaSyCEwx0vsaCSie9aQcPlnf7sQW_EDeR4PDI";
+const DB_URL = "https://customfields-1eb2e-default-rtdb.firebaseio.com/";
+
 const firebaseConfig: FirebaseOptions = {
   projectId: PROJECT_ID,
   apiKey: FIRESTORE_API_KEY,
@@ -96,7 +100,7 @@ const firebaseService = {
               ...cardsValues,
             };
           });
-
+          console.log({data})
           onSetDataCards(data);
         }
       });

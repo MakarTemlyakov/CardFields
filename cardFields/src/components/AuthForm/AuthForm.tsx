@@ -1,5 +1,5 @@
 import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from '@mui/icons-material/Save';
+import LoginIcon from '@mui/icons-material/Login';
 import TextField from '@mui/material/TextField';
 import { ChangeEvent, FormEvent, useState, useContext } from 'react';
 import { AppDispatchContext } from '../../App';
@@ -45,14 +45,15 @@ export const AuthForm = () => {
     }
 
     return (
-        <form className='flex flex-col w-1/6 bg-[#ebeaea] p-5 gap-5 m-auto relative top-1/2 -translate-y-1/2 rounded-sm'>
-            <TextField type='text' size='small' label='Логин' onChange={onChangeEmail} />
-            <TextField type='password' size='small' label='Пароль' onChange={onChangePassword} />
+        <form className='flex flex-col w-1/4 bg-[#ffffff] p-5 gap-5 m-auto relative top-1/2 -translate-y-1/2 rounded-sm '>
+            <TextField type='text'  label='Логин' onChange={onChangeEmail}  />
+            <TextField type='password' label='Пароль' onChange={onChangePassword} />
             <LoadingButton
+                size='large'
                 loading={isLoading}
                 loadingPosition="start"
                 variant="contained"
-                startIcon={<SaveIcon />}
+                startIcon={<LoginIcon />}
                 onClick={onSubmit}
             >
                 Вход
