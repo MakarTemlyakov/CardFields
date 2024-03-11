@@ -21,9 +21,9 @@ type UserResponse = {
   error: string | null;
 };
 
-const PROJECT_ID = "customfields-1eb2e";
-const FIRESTORE_API_KEY = "AIzaSyCEwx0vsaCSie9aQcPlnf7sQW_EDeR4PDI";
-const DB_URL = "https://customfields-1eb2e-default-rtdb.firebaseio.com/";
+const PROJECT_ID = 'customfields-1eb2e';
+const FIRESTORE_API_KEY = 'AIzaSyCEwx0vsaCSie9aQcPlnf7sQW_EDeR4PDI';
+const DB_URL = 'https://customfields-1eb2e-default-rtdb.firebaseio.com/';
 
 const firebaseConfig: FirebaseOptions = {
   projectId: PROJECT_ID,
@@ -38,7 +38,7 @@ export const db = getDatabase(app);
 
 const firebaseService = {
   signUp: async (email: string, password: string) => {
-    const response = await createUserWithEmailAndPassword(auth, email, password);
+    await createUserWithEmailAndPassword(auth, email, password);
   },
   signIn: async (email: string, password: string) => {
     let response: UserResponse = { user: null, error: null };
@@ -100,7 +100,6 @@ const firebaseService = {
               ...cardsValues,
             };
           });
-          console.log({data})
           onSetDataCards(data);
         }
       });

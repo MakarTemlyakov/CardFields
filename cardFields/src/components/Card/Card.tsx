@@ -21,8 +21,9 @@ export const Card = () => {
 
     useEffect(() => {
         if (card) {
+            const cardFields = card.cardFields ? card.cardFields : [];
             setName(card.name);
-            setFields(card.cardFields);
+            setFields(cardFields);
         }
     }, [card]);
 
@@ -30,7 +31,7 @@ export const Card = () => {
         const updatedCard = {
             id: card!.id,
             name: name!,
-            cardFields: fields!,
+            cardFields: fields,
         }
         await firebaseApi.updateCardById(updatedCard);
         setEditMode(false);

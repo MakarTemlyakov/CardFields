@@ -49,7 +49,6 @@ export const initialAppState: AppState = {
 
 export const appReducer = (state: AppState, action: Action): AppState => {
   let newState = { ...state };
-  console.log(state);
   switch (action.type) {
     case actions.SAVE_CARD: {
       const card = newState.cards.find((c) => c.id === action.payload.card!.id);
