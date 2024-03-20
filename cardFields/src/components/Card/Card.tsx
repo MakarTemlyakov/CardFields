@@ -18,12 +18,12 @@ export const Card = () => {
     const [fields, setFields] = useState<DataField[]>([]);
     const [isEditMode, setEditMode] = useState(false);
     const navigate = useNavigate();
+    console.log({ Card: cards })
 
     useEffect(() => {
         if (card) {
-            const cardFields = card.cardFields ? card.cardFields : [];
             setName(card.name);
-            setFields(cardFields);
+            setFields(card.cardFields);
         }
     }, [card]);
 
@@ -53,7 +53,11 @@ export const Card = () => {
     const onDeleteCard = async (cardId: string) => {
         await firebaseApi.deleteCardById(cardId);
         const deletedCard = cards.find((card) => card.id === cardId);
-        if (deletedCard) {
+
+        if (deletedCard && cards.length === 1) {
+            navigate(`/cards`, { replace: true });
+        }
+        if (deletedCard && cards.length > 1) {
             const currentCardId = cards[cards.indexOf(deletedCard) - 1].id;
             navigate(`../${currentCardId}`, { replace: true });
         }

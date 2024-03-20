@@ -68,8 +68,14 @@ export const appReducer = (state: AppState, action: Action): AppState => {
       return newState;
     }
     case actions.SET_DATA_CARDS: {
-      console.log({ SET_DATA_CARDS: action.payload.cards });
-      return { ...newState, cards: action.payload.cards! };
+      const mappedCards = action.payload.cards!.map((card) => {
+        return {
+          ...card,
+          cardFields: action.payload.card?.cardFields ? action.payload.card?.cardFields : [],
+        };
+      });
+
+      return { ...newState, cards: mappedCards };
     }
     case actions.DELETE_CARD: {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };

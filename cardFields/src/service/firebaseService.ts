@@ -75,7 +75,6 @@ const firebaseService = {
       const cardRef = ref(db, `${currentUser}/cards/` + cardId);
       onValue(cardRef, (snapshot) => {
         const data = snapshot.val();
-        console.log(data);
       });
     } catch (error) {
       console.error('error:', error);
@@ -90,7 +89,6 @@ const firebaseService = {
       const cardRef = ref(db, `${currentUser}/cards`);
 
       return onValue(cardRef, (snapshot) => {
-        console.log(snapshot.exists());
         if (snapshot.exists()) {
           const cards = snapshot.val();
           data = Object.entries(snapshot.val()).map(([key]) => {
@@ -100,8 +98,10 @@ const firebaseService = {
               ...cardsValues,
             };
           });
-          onSetDataCards(data);
+        } else {
+          data = [];
         }
+        onSetDataCards(data);
       });
     } catch (error) {
       console.error('error', error);
