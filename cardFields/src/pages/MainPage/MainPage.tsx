@@ -1,15 +1,17 @@
 
-import { Button, TextField, } from '@mui/material';
+import { Button } from '@mui/material';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { useState, useContext, useEffect, ChangeEvent } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { AppContext, AppDispatchContext } from '../../App';
 import { firebaseApi } from '../../api/firebaseApi';
 import { actions } from '../../actions/constatns';
 import { DataCard } from '../../reducers/appReducer';
 import { Loader } from '../../components/Loader/Loader';
+import { SearchBox } from '../../components/SearchBox';
+
 
 export type OnLoadData = (payload: DataCard[]) => void;
 
@@ -19,8 +21,12 @@ const MainPage = () => {
     const [isProfileMenu, setIsProfileMenu] = useState(false);
     const { user, cards } = useContext(AppContext);
     const dispatch = useContext(AppDispatchContext);
-    const [serachValue, setSearchValue] = useState('');
-    const [fillCards, setFillCards] = useState(cards);
+    const [searchValue, setSearchValue] = useState('');
+    const filledCards = cards.filter((card) => card.name.includes(searchValue));
+    const onSearch = (value: string) => {
+        setSearchValue(value);
+    }
+
     const onChangeProfileMenu = () => {
         setIsProfileMenu((prev) => !prev);
     }
@@ -60,11 +66,6 @@ const MainPage = () => {
         });
     }
 
-    const onSearch = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const value = e.currentTarget.value;
-        setSearchValue(value);
-    }
-
     return (<div className='flex flex-col'>
         <div className='w-[95%] mx-auto'>
             <div className='grid grid-cols-[25%_1fr] gap-20 p-2 min-h-screen'>
@@ -81,11 +82,11 @@ const MainPage = () => {
                         }
                     </div>
                     <div className='flex flex-col gap-2 relative -z-0'>
-                        <TextField label="Search" variant='outlined' size='small' className='w-full' onChange={(e) => onSearch(e)} />
+                        <SearchBox onSearch={onSearch} searchValue={searchValue} />
                         <Link to={'/cards/create'} ><Button variant="contained" color="info" className='min-w-full' size='large'>ADD Card</Button></Link>
                     </div>
                     <div className="bg-[lightgrey] rounded-sm  relative  h-[80%] p-2 flex flex-col">
-                        {isLoading ? <Loader /> : !isLoading && fillCards.length > 0 ? <CardItems cards={fillCards} /> : <span className='m-auto'>Нет карточек</span>}
+                        {isLoading ? <Loader /> : !isLoading && filledCards.length > 0 ? <CardItems cards={filledCards} /> : <span className='m-auto'>Нет карточек</span>}
                     </div>
                 </div>
                 <Outlet />

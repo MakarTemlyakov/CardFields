@@ -18,7 +18,6 @@ export const Card = () => {
     const [fields, setFields] = useState<DataField[]>([]);
     const [isEditMode, setEditMode] = useState(false);
     const navigate = useNavigate();
-    console.log({ Card: cards })
 
     useEffect(() => {
         if (card) {

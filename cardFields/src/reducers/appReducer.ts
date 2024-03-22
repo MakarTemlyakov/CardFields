@@ -71,10 +71,9 @@ export const appReducer = (state: AppState, action: Action): AppState => {
       const mappedCards = action.payload.cards!.map((card) => {
         return {
           ...card,
-          cardFields: action.payload.card?.cardFields ? action.payload.card?.cardFields : [],
+          cardFields: card.cardFields ? card.cardFields : [],
         };
       });
-
       return { ...newState, cards: mappedCards };
     }
     case actions.DELETE_CARD: {
