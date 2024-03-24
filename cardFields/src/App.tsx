@@ -11,7 +11,7 @@ import { Outlet } from 'react-router-dom';
 import './index.css'
 
 export type DataField = {
-  id: number;
+  id: string;
   name: string;
   value: string;
 }

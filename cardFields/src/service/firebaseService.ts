@@ -91,11 +91,25 @@ const firebaseService = {
       return onValue(cardRef, (snapshot) => {
         if (snapshot.exists()) {
           const cards = snapshot.val();
-          data = Object.entries(snapshot.val()).map(([key]) => {
+          data = Object.entries(cards).map(([key]) => {
+            let cardFields = [];
             const cardsValues = cards[key];
+            Object.keys(cardsValues).map((key) => {
+              if (key === 'cardFields') {
+                cardFields = Object.entries(cardsValues['cardFields']).map(([key]) => {
+                  const cardFieldValues = cardsValues['cardFields'][key];
+                  return {
+                    id: key,
+                    ...cardFieldValues,
+                  };
+                });
+              }
+            });
+
             return {
-              id: key,
               ...cardsValues,
+              id: key,
+              cardFields: cardFields,
             };
           });
         } else {
@@ -115,7 +129,15 @@ const firebaseService = {
       const currentUser = auth.currentUser?.uid;
       const cardRef = ref(db, `${currentUser}/cards`);
       createdCard = push(cardRef);
-      set(createdCard, { name, cardFields });
+      const cardKey = createdCard.key;
+
+      set(createdCard, { name: name });
+
+      cardFields.map((cardField) => {
+        const customFieldRef = ref(db, `${currentUser}/cards/${cardKey}/cardFields`);
+        const cardFieldRef = push(customFieldRef);
+        set(cardFieldRef, { name: cardField.name, value: cardField.value });
+      });
     } catch (err) {
       console.error('error:', err);
     }

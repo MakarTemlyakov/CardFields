@@ -26,7 +26,7 @@ const SearchBox: FC<SearchBoxProps> = ({ onSearch, searchValue }) => {
     return <TextField value={value} label="Search" variant='outlined' size='small' className='w-full' onChange={onChange} InputProps={{
         endAdornment: (
             < InputAdornment position="end">
-                <ClearIcon />
+                <ClearIcon className="cursor-pointer " />
             </ InputAdornment>
         ),
         onClick: onReset,
