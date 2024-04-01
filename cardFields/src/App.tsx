@@ -1,14 +1,10 @@
 
 import { appReducer, Action, initialAppState } from './reducers/appReducer';
-import { actions } from './actions/constatns';
-import { auth } from './service/firebaseService';
-import { firebaseApi } from './api/firebaseApi';
-
-import { onAuthStateChanged } from 'firebase/auth';
-import { createContext, useReducer, Dispatch, useEffect, useContext } from 'react';
+import { createContext, useReducer, Dispatch } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import './index.css'
+import { AuthProvider } from './providers/AuthProvider';
 
 export type DataField = {
   id: string;
@@ -24,44 +20,15 @@ function App() {
     appReducer,
     initialAppState
   );
-  const dispatchAction = useContext(AppDispatchContext);
-
-  useEffect(() => {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        dispatchAction({
-          type: actions.AUTH_USER,
-          payload: {
-            userAuth: {
-              id: user.uid,
-              email: user.email,
-              accessToken: await user.getIdToken(),
-            },
-          }
-        });
-      } else {
-        await firebaseApi.loginOut();
-        dispatchAction({
-          type: actions.AUTH_USER,
-          payload: {
-            userAuth: {
-              id: '',
-              email: '',
-              accessToken: '',
-            },
-          }
-        });
-      }
-    });
-
-  }, [dispatchAction]);
 
   return (
-    <AppContext.Provider value={state}>
-      <AppDispatchContext.Provider value={dispatch}>
-        <Outlet />
-      </AppDispatchContext.Provider>
-    </AppContext.Provider>
+    <AuthProvider>
+      <AppContext.Provider value={state}>
+        <AppDispatchContext.Provider value={dispatch}>
+          <Outlet />
+        </AppDispatchContext.Provider>
+      </AppContext.Provider>
+    </AuthProvider>
   )
 }
 

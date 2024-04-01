@@ -11,6 +11,7 @@ import { actions } from '../../actions/constatns';
 import { DataCard } from '../../reducers/appReducer';
 import { Loader } from '../../components/Loader/Loader';
 import { SearchBox } from '../../components/SearchBox';
+import { useAuth } from '../../hooks/useAuth';
 
 
 export type OnLoadData = (payload: DataCard[]) => void;
@@ -19,20 +20,20 @@ const MainPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isProfileMenu, setIsProfileMenu] = useState(false);
-    const { user, cards } = useContext(AppContext);
+    const { cards } = useContext(AppContext);
     const dispatch = useContext(AppDispatchContext);
     const [searchValue, setSearchValue] = useState('');
     const filledCards = cards.filter((card) => card.name.includes(searchValue));
     const onSearch = (value: string) => {
         setSearchValue(value);
     }
-
+    const { user } = useAuth()
     const onChangeProfileMenu = () => {
         setIsProfileMenu((prev) => !prev);
     }
 
     useEffect(() => {
-        if (user && user?.accessToken === '') {
+        if (!user) {
             navigate('/auth');
         }
 

@@ -16,10 +16,11 @@ export const AuthForm = () => {
     const signIn = async (user: User) => {
         setIsLoading(true);
         const data = await firebaseApi.signIn(user);
+        console.log({ data })
         dispatch({
             type: actions.AUTH_USER,
             payload: {
-                userAuth: data!.user,
+                userAuth: data?.user,
             }
         });
         setIsLoading(false);
@@ -46,7 +47,7 @@ export const AuthForm = () => {
 
     return (
         <form className='flex flex-col w-1/4 bg-[#ffffff] p-5 gap-5 m-auto relative top-1/2 -translate-y-1/2 rounded-sm '>
-            <TextField type='text'  label='Логин' onChange={onChangeEmail}  />
+            <TextField type='text' label='Логин' onChange={onChangeEmail} />
             <TextField type='password' label='Пароль' onChange={onChangePassword} />
             <LoadingButton
                 size='large'

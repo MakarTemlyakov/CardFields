@@ -1,17 +1,20 @@
-import { AppContext } from "../../App";
+
+
 import { AuthForm } from "../../components/AuthForm/AuthForm"
-import { useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from "../../hooks/useAuth";
 
 const AuthPage = () => {
     const navigate = useNavigate();
-    const { user } = useContext(AppContext);
+    const { user } = useAuth();
 
     useEffect(() => {
-        if (user && user?.accessToken) {
-            navigate('/cards');
+        if (user) {
+            navigate('/cards')
         }
-    }, [user, navigate])
+    }, [navigate, user])
+
 
     return (
         <div className="h-full">

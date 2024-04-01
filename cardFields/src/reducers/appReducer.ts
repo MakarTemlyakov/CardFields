@@ -18,10 +18,10 @@ export type User = {
 export type UserAuth = UserAccount | null;
 
 export type AppPayloadData = {
-  card?: DataCard | null;
-  cards?: DataCard[] | null;
-  user?: User | null;
-  userAuth?: UserAuth | null;
+  card?: DataCard;
+  cards?: DataCard[];
+  user?: User;
+  userAuth?: UserAuth;
 };
 
 export type Action = {
@@ -30,7 +30,7 @@ export type Action = {
 };
 
 interface AppState {
-  user: UserAuth;
+  user?: UserAuth;
   cards: DataCard[];
   isShowFormAdd: boolean;
   isAuth: boolean;
@@ -79,13 +79,28 @@ export const appReducer = (state: AppState, action: Action): AppState => {
     case actions.DELETE_CARD: {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };
     }
+
+    case actions.STORAGE_DATA: {
+      const userData = window.localStorage.getItem('user');
+      if (userData) {
+        const user = JSON.parse(userData);
+        newState = { ...newState, user, isAuth: true };
+      }
+      return newState;
+    }
+
     case actions.AUTH_USER: {
-      const userPayload = action.payload.userAuth!;
+      const userPayload = action.payload.userAuth;
+
+      window.localStorage.setItem('user', JSON.stringify(userPayload));
+
       newState = { ...newState, user: userPayload, isAuth: true };
+
       return newState;
     }
 
     case actions.SIGN_OUT_USER: {
+      window.localStorage.removeItem('user');
       newState = { ...newState, user: { id: '', email: '', accessToken: '' }, isAuth: false };
       return newState;
     }
