@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setUser(user)
             } else {
                 dispatchAction({
-                    type: actions.AUTH_USER,
+                    type: actions.SIGN_OUT_USER,
                     payload: {
                         userAuth: {
                             id: '',

@@ -80,15 +80,6 @@ export const appReducer = (state: AppState, action: Action): AppState => {
       return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };
     }
 
-    case actions.STORAGE_DATA: {
-      const userData = window.localStorage.getItem('user');
-      if (userData) {
-        const user = JSON.parse(userData);
-        newState = { ...newState, user, isAuth: true };
-      }
-      return newState;
-    }
-
     case actions.AUTH_USER: {
       const userPayload = action.payload.userAuth;
 
