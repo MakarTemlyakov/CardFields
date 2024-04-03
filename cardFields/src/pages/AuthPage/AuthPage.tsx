@@ -1,19 +1,19 @@
-
-
 import { AuthForm } from "../../components/AuthForm/AuthForm"
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from "../../hooks/useAuth";
+import useCustomContext from "../../hooks/useContext";
+import { AppContext } from "../../providers/AppProvider";
+
 
 const AuthPage = () => {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { state } = useCustomContext(AppContext);
 
     useEffect(() => {
-        if (user) {
+        if (state.user) {
             navigate('/cards')
         }
-    }, [navigate, user])
+    }, [navigate, state.user])
 
 
     return (

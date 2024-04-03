@@ -4,14 +4,13 @@ import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { useState, useContext, useEffect } from 'react';
-import { AppContext, AppDispatchContext } from '../../App';
+import { useState, useEffect } from 'react';
 import { firebaseApi } from '../../api/firebaseApi';
 import { actions } from '../../actions/constatns';
-import { DataCard } from '../../reducers/appReducer';
 import { Loader } from '../../components/Loader/Loader';
 import { SearchBox } from '../../components/SearchBox';
-import { useAuth } from '../../hooks/useAuth';
+import useCustomContext from '../../hooks/useContext';
+import { AppContext, DataCard } from '../../providers/AppProvider';
 
 
 export type OnLoadData = (payload: DataCard[]) => void;
@@ -20,20 +19,18 @@ const MainPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isProfileMenu, setIsProfileMenu] = useState(false);
-    const { cards } = useContext(AppContext);
-    const dispatch = useContext(AppDispatchContext);
+    const { state, dispatch } = useCustomContext(AppContext);
     const [searchValue, setSearchValue] = useState('');
-    const filledCards = cards.filter((card) => card.name.includes(searchValue));
+    const filledCards = state.cards.filter((card) => card.name.includes(searchValue));
     const onSearch = (value: string) => {
         setSearchValue(value);
     }
-    const { user } = useAuth()
     const onChangeProfileMenu = () => {
         setIsProfileMenu((prev) => !prev);
     }
 
     useEffect(() => {
-        if (!user) {
+        if (!state.user) {
             navigate('/auth');
         }
 
@@ -51,7 +48,7 @@ const MainPage = () => {
         }
 
         loadDataCards();
-    }, [dispatch, navigate, user]);
+    }, [dispatch, navigate, state.user]);
 
     const signOut = async () => {
         await firebaseApi.loginOut();
@@ -73,7 +70,7 @@ const MainPage = () => {
                 <div className="flex flex-col gap-5">
                     <div className='flex justify-between bg-[lightgrey] p-2 relative rounded-sm'>
                         <p className='truncate ...'>
-                            <span>{user?.email}</span>
+                            <span>{state.user?.email}</span>
                         </p>
                         <button onClick={onChangeProfileMenu}>{isProfileMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}</button>
                         {isProfileMenu &&

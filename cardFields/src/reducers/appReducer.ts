@@ -1,74 +1,28 @@
-import { DataField } from '../App';
 import { actions } from '../actions/constatns';
-import { UserAccount } from '../service/firebaseService';
-
-type Payload<T> = T;
-
-export type DataCard = {
-  id: string;
-  name: string;
-  cardFields: DataField[];
-};
-
-export type User = {
-  email: string;
-  password: string;
-};
-
-export type UserAuth = UserAccount | null;
-
-export type AppPayloadData = {
-  card?: DataCard;
-  cards?: DataCard[];
-  user?: User;
-  userAuth?: UserAuth;
-};
-
-export type Action = {
-  type: string;
-  payload: Payload<AppPayloadData>;
-};
-
-interface AppState {
-  user?: UserAuth;
-  cards: DataCard[];
-  isShowFormAdd: boolean;
-  isAuth: boolean;
-}
-
-export const initialAppState: AppState = {
-  cards: [],
-  isShowFormAdd: false,
-  user: {
-    id: '',
-    email: null,
-    accessToken: '',
-  },
-  isAuth: false,
-};
+import { Action, AppState } from '../providers/AppProvider';
 
 export const appReducer = (state: AppState, action: Action): AppState => {
   let newState = { ...state };
   switch (action.type) {
     case actions.SAVE_CARD: {
-      const card = newState.cards.find((c) => c.id === action.payload.card!.id);
+      const card = newState.cards.find((c) => c.id === action.payload?.card!.id);
       if (card) {
         const newCard = {
           ...card,
-          cardFields: action.payload.card!.cardFields,
-          name: action.payload.card!.name,
+          cardFields: action.payload?.card!.cardFields,
+          name: action.payload?.card!.name,
         };
-        newState.cards = state.cards.map((c) => (c.id === action.payload.card!.id ? newCard : c));
+        newState.cards = state.cards.map((c) => (c.id === action.payload?.card!.id ? newCard : c));
         newState = { ...newState, cards: newState.cards };
         return newState;
       } else {
-        newState = { ...newState, cards: [...newState.cards, action.payload.card!] };
+        newState = { ...newState, cards: [...newState.cards, action.payload?.card!] };
       }
 
       return newState;
     }
     case actions.SET_DATA_CARDS: {
-      const mappedCards = action.payload.cards!.map((card) => {
+      const mappedCards = action.payload?.cards!.map((card) => {
         return {
           ...card,
           cardFields: card.cardFields ? card.cardFields : [],
@@ -77,11 +31,14 @@ export const appReducer = (state: AppState, action: Action): AppState => {
       return { ...newState, cards: mappedCards };
     }
     case actions.DELETE_CARD: {
-      return { ...newState, cards: newState.cards.filter((c) => c.id !== action.payload.card!.id) };
+      return {
+        ...newState,
+        cards: newState.cards.filter((c) => c.id !== action.payload?.card!.id),
+      };
     }
 
     case actions.AUTH_USER: {
-      const userPayload = action.payload.userAuth;
+      const userPayload = action.payload?.userAuth;
 
       window.localStorage.setItem('user', JSON.stringify(userPayload));
 

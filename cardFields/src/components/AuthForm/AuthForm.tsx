@@ -1,22 +1,21 @@
 import LoadingButton from '@mui/lab/LoadingButton';
 import LoginIcon from '@mui/icons-material/Login';
 import TextField from '@mui/material/TextField';
-import { ChangeEvent, FormEvent, useState, useContext } from 'react';
-import { AppDispatchContext } from '../../App';
+import { ChangeEvent, FormEvent, useState } from 'react';
 import { actions } from '../../actions/constatns';
-import { User } from '../../reducers/appReducer';
 import { firebaseApi } from '../../api/firebaseApi';
+import { AppContext, User } from '../../providers/AppProvider';
+import useCustomContext from '../../hooks/useContext';
 
 export const AuthForm = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const dispatch = useContext(AppDispatchContext);
+    const { dispatch } = useCustomContext(AppContext);
 
     const signIn = async (user: User) => {
         setIsLoading(true);
         const data = await firebaseApi.signIn(user);
-        console.log({ data })
         dispatch({
             type: actions.AUTH_USER,
             payload: {

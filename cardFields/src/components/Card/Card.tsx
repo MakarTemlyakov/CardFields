@@ -2,18 +2,19 @@ import { Button, Typography } from '@mui/material';
 import { OutlinedInput } from '@mui/material';
 import Add from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { AppContext, DataField } from '../../App';
-import { useContext, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FormField } from '../FormField/FormFiled';
 import { firebaseApi } from '../../api/firebaseApi';
+import { AppContext, DataField } from '../../providers/AppProvider';
+import useCustomContext from '../../hooks/useContext';
 
 
 export const Card = () => {
     const { cardId } = useParams();
     const [isShowForm, setToggleAddForm] = useState(false);
-    const { cards } = useContext(AppContext);
-    const card = cards.find((card) => card.id === cardId!);
+    const { state } = useCustomContext(AppContext);
+    const card = state.cards.find((card) => card.id === cardId!);
     const [name, setName] = useState('');
     const [fields, setFields] = useState<DataField[]>([]);
     const [isEditMode, setEditMode] = useState(false);
@@ -51,13 +52,13 @@ export const Card = () => {
 
     const onDeleteCard = async (cardId: string) => {
         await firebaseApi.deleteCardById(cardId);
-        const deletedCard = cards.find((card) => card.id === cardId);
+        const deletedCard = state.cards.find((card) => card.id === cardId);
 
-        if (deletedCard && cards.length === 1) {
+        if (deletedCard && state.cards.length === 1) {
             navigate(`/cards`, { replace: true });
         }
-        if (deletedCard && cards.length > 1) {
-            const currentCardId = cards[cards.indexOf(deletedCard) - 1].id;
+        if (deletedCard && state.cards.length > 1) {
+            const currentCardId = state.cards[state.cards.indexOf(deletedCard) - 1].id;
             navigate(`../${currentCardId}`, { replace: true });
         }
     }
