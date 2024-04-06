@@ -49,7 +49,7 @@ export const appReducer = (state: AppState, action: Action): AppState => {
 
     case actions.SIGN_OUT_USER: {
       window.localStorage.removeItem('user');
-      newState = { ...newState, user: { id: '', email: '', accessToken: '' }, isAuth: false };
+      newState = { ...newState, user: null, isAuth: false };
       return newState;
     }
 

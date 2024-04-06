@@ -5,10 +5,9 @@ import {
   signOut,
 } from 'firebase/auth';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
-import { remove, getDatabase, onValue, push, ref, set, update } from 'firebase/database';
-import { DataField } from '../App';
-import { DataCard } from '../reducers/appReducer';
+import { remove, getDatabase, onValue, push, ref, set, update, get } from 'firebase/database';
 import { OnLoadData } from '../pages/MainPage/MainPage';
+import { DataCard, DataField } from '../providers/AppProvider';
 
 export type UserAccount = {
   id: string;
@@ -147,9 +146,28 @@ const firebaseService = {
 
   updateCardById: async (card: DataCard) => {
     const currentUser = auth.currentUser?.uid;
+    const cardFieldsRef = ref(db, `${currentUser}/cards/${card.id}/cardFields`);
+    const cardFieldsSnapshot = await get(cardFieldsRef);
+    const cardFields = cardFieldsSnapshot.exists() ? cardFieldsSnapshot.val() : {};
+
+    Object.keys(cardFields).forEach(async (fbCardFieldKey) => {
+      if (!card.cardFields.some((cardField) => cardField.id === fbCardFieldKey)) {
+        const fbCardField = ref(db, `${currentUser}/cards/${card.id}/cardFields/${fbCardFieldKey}`);
+        await remove(fbCardField);
+      }
+    });
+
+    for (const cardField of card.cardFields) {
+      if (cardField.id && Object.values(cardFields).includes(cardField.id)) {
+        const fbCardField = ref(db, `${currentUser}/cards/${card.id}/cardFields/${cardField.id}`);
+        await update(fbCardField, { name: cardField.name, value: cardField.value });
+      } else {
+        await push(cardFieldsRef, { name: cardField.name, value: cardField.value });
+      }
+    }
+
     await update(ref(db, `${currentUser}/cards/${card.id}`), {
       name: card.name,
-      cardFields: card.cardFields,
     });
   },
 

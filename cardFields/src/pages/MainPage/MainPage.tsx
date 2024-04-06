@@ -74,7 +74,7 @@ const MainPage = () => {
                         </p>
                         <button onClick={onChangeProfileMenu}>{isProfileMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}</button>
                         {isProfileMenu &&
-                            <ul className='bg-[lightgrey] p-2 absolute top-[101%] left-0 right-0 z-40 flex flex-col rounded-sm'>
+                            <ul className='bg-[lightgrey] p-2 absolute top-[105%] left-0 right-0 z-40 flex flex-col rounded-sm'>
                                 <li ><Button onClick={signOut}>выйти</Button></li>
                             </ul>
                         }

@@ -3,6 +3,8 @@ import { appReducer } from "../reducers/appReducer";
 import { onAuthStateChanged } from "firebase/auth";
 import { UserAccount, auth } from "../service/firebaseService";
 import { actions } from "../actions/constatns";
+import { firebaseApi } from "../api/firebaseApi";
+import { Navigate, useNavigate } from "react-router-dom";
 
 type Payload<T> = T;
 
@@ -66,7 +68,6 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
         initialAppState.state,
     );
 
-    console.log({ state1: state })
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
@@ -82,17 +83,13 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                 })
             } else {
+                await firebaseApi.loginOut();
                 dispatch({
                     type: actions.SIGN_OUT_USER,
                     payload: {
-                        userAuth: {
-                            id: '',
-                            email: '',
-                            accessToken: '',
-                        },
+                        userAuth: null,
                     }
                 });
-
             }
         })
         return () => unsubscribe();
