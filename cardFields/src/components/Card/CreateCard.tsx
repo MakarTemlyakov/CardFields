@@ -2,11 +2,11 @@ import { useState } from "react";
 
 import RemoveIcon from '@mui/icons-material/Remove';
 import Add from "@mui/icons-material/Add";
-import { DataField } from "../../App";
 import { FormField } from "../FormField/FormFiled";
 import { Button, OutlinedInput, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { firebaseApi } from "../../api/firebaseApi";
+import { DataField } from "../../providers/AppProvider";
 
 
 export const CreateCard = () => {
@@ -40,6 +40,12 @@ export const CreateCard = () => {
         setName(name);
     }
 
+    const onChangeValueField = (event: React.ChangeEvent<HTMLInputElement>, field: DataField) => {
+        const value = event.target.value;
+        const updatedFields = fields.map((f) => f.id === field.id ? { ...f, value: value } : f);
+        setFields(updatedFields);
+    }
+
     return (
         <main className='rounded-[4px] bg-lightgray w-full flex flex-col min-h-screen'>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} countFields={fields.length} />}
@@ -57,7 +63,7 @@ export const CreateCard = () => {
                     <div className='grid grid-cols-2' key={field.id}>
                         <Typography variant='h5' mb='5px' className='flex flex-1'>{field.name}:</Typography>
                         <div className='flex gap-2'>
-                            <OutlinedInput size='small' value={field.value} />
+                            <OutlinedInput size='small' value={field.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValueField(event, field)} />
                             <Button children={<RemoveIcon />} variant="contained" size="small" color='error' onClick={() => onDeleteField(field)} />
                             <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                         </div>
