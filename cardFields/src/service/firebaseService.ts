@@ -158,7 +158,7 @@ const firebaseService = {
     });
 
     for (const cardField of card.cardFields) {
-      if (cardField.id && Object.values(cardFields).includes(cardField.id)) {
+      if (cardField.id && Object.keys(cardFields).includes(cardField.id)) {
         const fbCardField = ref(db, `${currentUser}/cards/${card.id}/cardFields/${cardField.id}`);
         await update(fbCardField, { name: cardField.name, value: cardField.value });
       } else {

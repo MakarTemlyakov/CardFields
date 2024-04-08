@@ -70,8 +70,8 @@ export const Card = () => {
 
     const onChangeValueField = (event: React.ChangeEvent<HTMLInputElement>, field: DataField) => {
         const value = event.target.value;
-        const newFields = [...fields!].map((f) => f.id === field.id ? { ...field, value } : field);
-        setFields(newFields);
+        const updatedFields = fields.map((f) => f.id === field.id ? { ...f, value: value } : f);
+        setFields(updatedFields);
     }
     return card ? (
         <main className='rounded-[4px] bg-lightgray w-full  flex flex-col min-h-screen '>
