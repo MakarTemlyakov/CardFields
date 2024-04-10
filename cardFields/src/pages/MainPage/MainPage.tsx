@@ -1,5 +1,5 @@
 
-import { Button } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -11,8 +11,8 @@ import { Loader } from '../../components/Loader/Loader';
 import { SearchBox } from '../../components/SearchBox';
 import useCustomContext from '../../hooks/useContext';
 import { AppContext, DataCard } from '../../providers/AppProvider';
-
-
+import NightlightIcon from '@mui/icons-material/Nightlight';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
 export type OnLoadData = (payload: DataCard[]) => void;
 
 const MainPage = () => {
@@ -64,26 +64,31 @@ const MainPage = () => {
         });
     }
 
-    return (<div className='flex flex-col'>
-        <div className='w-[95%] mx-auto'>
-            <div className='grid grid-cols-[25%_1fr] gap-20 p-2 min-h-screen'>
-                <div className="flex flex-col gap-5">
-                    <div className='flex justify-between bg-[lightgrey] p-2 relative rounded-sm'>
+    return (<div className='flex flex-col dark:bg-slate-900 dark:text-white'>
+        <div className='w-[95%] mx-auto '>
+            <div className='grid grid-cols-[25%_1fr] gap-20 p-2 min-h-screen '>
+                <div className="flex flex-col gap-5 ">
+                    <div className='flex justify-between bg-[lightgrey] p-2 relative rounded-sm dark:bg-slate-800 dark:text-slate-300'>
                         <p className='truncate ...'>
                             <span>{state.user?.email}</span>
                         </p>
                         <button onClick={onChangeProfileMenu}>{isProfileMenu ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}</button>
                         {isProfileMenu &&
-                            <ul className='bg-[lightgrey] p-2 absolute top-[105%] left-0 right-0 z-40 flex flex-col rounded-sm'>
+                            <ul className='bg-[lightgrey] p-2 absolute top-[105%] left-0 right-0 z-40 flex flex-col rounded-sm dark:bg-slate-800 '>
                                 <li ><Button onClick={signOut}>выйти</Button></li>
+                                <li ><IconButton color="primary" onClick={() => dispatch({ type: actions.TOGGLE_THEME })}>{state.theme === 'dark' ? <WbSunnyIcon /> : <NightlightIcon />}</IconButton></li>
                             </ul>
                         }
                     </div>
                     <div className='flex flex-col gap-2 relative -z-0'>
                         <SearchBox onSearch={onSearch} searchValue={searchValue} />
-                        <Link to={'/cards/create'} ><Button variant="contained" color="info" className='min-w-full' size='large'>ADD Card</Button></Link>
+                        <div className='flex justify-between'>
+                            <Link to={'/cards/create'} ><Button variant="contained" color="info" className='min-w-full' size='large'>ADD Card</Button></Link>
+
+                        </div>
                     </div>
-                    <div className="bg-[lightgrey] rounded-sm  relative  h-[80%] p-2 flex flex-col">
+
+                    <div className="bg-[lightgrey] rounded-sm  relative  h-[80%] p-2 flex flex-col dark:bg-slate-800">
                         {isLoading ? <Loader /> : !isLoading && filledCards.length > 0 ? <CardItems cards={filledCards} /> : <span className='m-auto'>Нет карточек</span>}
                     </div>
                 </div>

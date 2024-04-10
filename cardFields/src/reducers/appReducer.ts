@@ -53,6 +53,19 @@ export const appReducer = (state: AppState, action: Action): AppState => {
       return newState;
     }
 
+    case actions.TOGGLE_THEME: {
+      if (newState.theme === 'dark') {
+        document.documentElement.classList.remove('dark');
+        localStorage.theme = 'light';
+        newState.theme = localStorage.theme;
+      } else {
+        document.documentElement.classList.add('dark');
+        localStorage.theme = 'dark';
+        newState.theme = localStorage.theme;
+      }
+      return newState;
+    }
+
     default:
       return state;
   }

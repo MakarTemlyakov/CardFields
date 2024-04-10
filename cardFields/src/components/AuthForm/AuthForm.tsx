@@ -45,9 +45,25 @@ export const AuthForm = () => {
     }
 
     return (
-        <form className='flex flex-col w-1/4 bg-[#ffffff] p-5 gap-5 m-auto relative top-1/2 -translate-y-1/2 rounded-sm '>
-            <TextField type='text' label='Логин' onChange={onChangeEmail} />
-            <TextField type='password' label='Пароль' onChange={onChangePassword} />
+        <form className='flex flex-col w-1/4 bg-[#ffffff] p-5 gap-5 m-auto relative top-1/2 -translate-y-1/2 rounded-sm dark:bg-slate-800'>
+            <TextField type='text' label='Логин' onChange={onChangeEmail} InputProps={{
+                classes: {
+                    root: 'dark:bg-slate-700 dark:text-slate-300',
+                }
+            }} InputLabelProps={{
+                classes: {
+                    root: 'dark:text-slate-400',
+                }
+            }} />
+            <TextField type='password' label='Пароль' onChange={onChangePassword} InputProps={{
+                classes: {
+                    root: 'dark:bg-slate-700 dark:text-slate-300'
+                }
+            }} InputLabelProps={{
+                classes: {
+                    root: 'dark:text-slate-400'
+                }
+            }} />
             <LoadingButton
                 size='large'
                 loading={isLoading}
@@ -55,6 +71,7 @@ export const AuthForm = () => {
                 variant="contained"
                 startIcon={<LoginIcon />}
                 onClick={onSubmit}
+                className='dark:bg-slate-700 dark:text-slate-300 hover:bg-black'
             >
                 Вход
             </LoadingButton>

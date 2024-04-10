@@ -76,33 +76,33 @@ export const Card = () => {
     return card ? (
         <main className='rounded-[4px] bg-lightgray w-full  flex flex-col min-h-screen '>
             {isShowForm && <FormField onToggleAddForm={onToggleAddForm} onAddDataField={onAddDataField} countFields={fields.length} />}
-            <Typography variant="h4" mb='5px' component="h1">Карточка</Typography>
-            <div className='w-full h-0.5 bg-slate-200 rounded-[2px] mb-10' />
-            <div className='flex flex-col gap-10 w-1/2 ' >
+            <Typography variant="h5" mb='5px' component="h1" className='dark:text-slate-400'>Карточка</Typography>
+            <div className='w-full h-0.5 bg-slate-200 dark:bg-slate-800 rounded-[2px] mb-10' />
+            <div className='flex flex-col gap-10 w-1/2 dark:text-slate-300' >
                 <div className='grid grid-cols-2'>
-                    <Typography variant='h5' mb='5px' component='p'><span className='truncate'>Название:</span></Typography>
+                    <Typography mb='5px' component='p'><span className='truncate'>Название:</span></Typography>
                     <div className='flex gap-2 items-center'>
                         {isEditMode ?
                             <>
-                                <OutlinedInput size='small' value={name} onChange={onChangeName} />
+                                <OutlinedInput size='small' value={name} onChange={onChangeName} classes={{ input: 'dark:bg-slate-800 dark:text-slate-300' }} />
                                 <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                             </> :
-                            <Typography mb='5px' variant="h5" component="p" ><span className='truncate'>{card.name}</span></Typography>
+                            <Typography mb='5px' component="p" ><span className='truncate'>{card.name}</span></Typography>
                         }
                     </div>
                 </div>
                 {fields && fields.length > 0 && fields.map((field: DataField) => (
                     <div className='grid grid-cols-2' key={field.id}>
-                        <Typography variant='h5' mb='5px' className='flex flex-1'>{field.name}:</Typography>
+                        <Typography mb='5px' className='flex flex-1'>{field.name}:</Typography>
                         <div className='flex gap-2 items-center'>
                             {isEditMode ?
                                 <>
-                                    <OutlinedInput size='small' value={field.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValueField(event, field)} />
+                                    <OutlinedInput size='small' value={field.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChangeValueField(event, field)} classes={{ input: 'dark:bg-slate-800 dark:text-slate-300' }} />
                                     <Button children={<RemoveIcon />} variant="contained" size="small" color='error' onClick={() => onDeleteField(field)} />
                                     <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                                 </>
                                 :
-                                <Typography variant='h5' mb='5px' component='p'><span className='truncate'>{field.value}</span></Typography>
+                                <Typography mb='5px' component='p'><span className='truncate'>{field.value}</span></Typography>
                             }
                         </div>
                     </div>
@@ -112,7 +112,7 @@ export const Card = () => {
                 {isEditMode ?
                     <>
                         <Button variant="contained" size="large" color='success' className='p-30' onClick={onSaveCard}>Сохранить</Button>
-                        <Button variant="contained" size="large" color='error' className='p-30'>Отменить</Button>
+                        <Button variant="contained" size="large" color='error' className='p-30' onClick={() => setEditMode(false)}>Отменить</Button>
                     </>
                     :
                     <>

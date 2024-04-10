@@ -6,6 +6,7 @@ const SET_DATA_CARDS = 'SET_DATA_CARDS';
 const SIGN_OUT_USER = 'SIGN_OUT_USER';
 const AUTH_USER = 'AUTH_USER';
 const STORAGE_DATA = 'STORAGE_DATA';
+const TOGGLE_THEME = 'TOGGLE_THEME';
 
 export const actions = {
   ADD,
@@ -16,4 +17,5 @@ export const actions = {
   SIGN_OUT_USER,
   AUTH_USER,
   STORAGE_DATA,
+  TOGGLE_THEME,
 };

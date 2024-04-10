@@ -43,6 +43,7 @@ export interface AppState {
     user?: UserAuth;
     cards: DataCard[];
     isAuth: boolean;
+    theme: string;
 }
 
 type AppContextType = {
@@ -55,6 +56,7 @@ const initialAppState: AppContextType = {
         cards: [],
         user: null,
         isAuth: false,
+        theme: localStorage.theme || 'light',
     },
     dispatch: () => ({}) as Dispatch<Action>,
 };
@@ -69,6 +71,11 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     useEffect(() => {
+        if (localStorage.theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             if (firebaseUser) {
                 const user = {

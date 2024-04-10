@@ -17,7 +17,7 @@ const AuthPage = () => {
 
 
     return (
-        <div className="h-full">
+        <div className="h-full dark:bg-slate-900">
             <AuthForm />
         </div>
     )
