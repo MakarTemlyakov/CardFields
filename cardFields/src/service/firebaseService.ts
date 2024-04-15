@@ -39,6 +39,7 @@ const firebaseService = {
   signUp: async (email: string, password: string) => {
     await createUserWithEmailAndPassword(auth, email, password);
   },
+
   signIn: async (email: string, password: string) => {
     let response: UserResponse = { user: null, error: null };
 
@@ -75,6 +76,19 @@ const firebaseService = {
       onValue(cardRef, (snapshot) => {
         const data = snapshot.val();
       });
+    } catch (error) {
+      console.error('error:', error);
+    }
+  },
+
+  deleteAllCards: async () => {
+    try {
+      const currentUser = auth.currentUser?.uid;
+      const cardsRef = ref(db, `${currentUser}/cards`);
+      const snapshot = await get(cardsRef);
+      if (snapshot.exists()) {
+        await remove(cardsRef);
+      }
     } catch (error) {
       console.error('error:', error);
     }

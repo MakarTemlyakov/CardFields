@@ -20,6 +20,7 @@ export const Card = () => {
     const [isEditMode, setEditMode] = useState(false);
     const navigate = useNavigate();
 
+
     useEffect(() => {
         if (card) {
             setName(card.name);

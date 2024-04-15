@@ -55,7 +55,7 @@ export const CreateCard = () => {
                 <div className='grid grid-cols-2'>
                     <Typography variant='h5' mb='5px'><span className='truncate'>Название:</span></Typography>
                     <div className='flex gap-2'>
-                        <OutlinedInput size='small' value={name} onChange={onChangeName} />
+                        <OutlinedInput size='small' value={name} onChange={onChangeName} classes={{ input: 'dark:bg-slate-800 dark:text-slate-300' }} />
                         <Button children={<Add />} variant="contained" size="small" color='success' onClick={onToggleAddForm} />
                     </div>
                 </div>

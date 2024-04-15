@@ -2,7 +2,7 @@ import { Button, TextField, Typography } from '@mui/material';
 import DoneIcon from '@mui/icons-material/Done';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { FocusEvent, useState, useEffect, useRef } from 'react';
-import { DataField, } from '../../App';
+
 import CloseIcon from '@mui/icons-material/Close';
 import { useGenerateId } from '../../utils/getUniqueId';
 

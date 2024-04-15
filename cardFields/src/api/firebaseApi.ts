@@ -1,6 +1,5 @@
-import { DataField } from '../App';
 import { OnLoadData } from '../pages/MainPage/MainPage';
-import { DataCard } from '../reducers/appReducer';
+import { DataCard, DataField } from '../providers/AppProvider';
 import { firebaseService } from '../service/firebaseService';
 
 export type User = {
@@ -23,6 +22,8 @@ const firebaseApi = {
   deleteCardById: async (cardId: string) => await firebaseService.deleteCardById(cardId),
 
   updateCardById: async (card: DataCard) => await firebaseService.updateCardById(card),
+
+  deleteAllCards: async () => await firebaseService.deleteAllCards(),
 };
 
 export { firebaseApi };
