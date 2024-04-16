@@ -1,5 +1,5 @@
 
-import { Button, IconButton, TextField, Typography } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -13,7 +13,7 @@ import useCustomContext from '../../hooks/useContext';
 import { AppContext, DataCard } from '../../providers/AppProvider';
 import NightlightIcon from '@mui/icons-material/Nightlight';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Modal } from '../../components/Modal/Modal';
+
 import * as XLSX from "xlsx";
 
 export type OnLoadData = (payload: DataCard[]) => void;
@@ -24,15 +24,11 @@ const MainPage = () => {
     const [isProfileMenu, setIsProfileMenu] = useState(false);
     const { state, dispatch } = useCustomContext(AppContext);
     const [searchValue, setSearchValue] = useState('');
-    const [isModal, setIsModal] = useState(false);
     const filledCards = state.cards.filter((card) => card.name.includes(searchValue));
     const onSearch = (value: string) => {
         setSearchValue(value);
     }
 
-    const onToggleAddForm = () => {
-        setIsModal((prev) => !prev);
-    }
     const onChangeProfileMenu = () => {
         setIsProfileMenu((prev) => !prev);
     }
@@ -77,25 +73,31 @@ const MainPage = () => {
     }
 
     const onSaveToExcel = () => {
+        const data = state.cards;
+        let worksheet = {} as XLSX.WorkSheet;
         const workbook = XLSX.utils.book_new();
-        state.cards.map((card) => {
-            const worksheet = XLSX.utils.json_to_sheet([{ id: card.id }, { name: card.name }, ...card.cardFields]);
-            const max_width = state.cards.reduce((w, r) => Math.max(w, r.id.length), 10);
-            worksheet["!cols"] = [{ wch: max_width }];
+        data.map((card) => {
+            const mappedFields = card.cardFields.map((field) => {
+                return {
+                    fieldName: field.name,
+                    fieldValue: field.value,
+                }
+            });
+            const mappedData = [{ name: card.name }, ...mappedFields];
+            worksheet = XLSX.utils.json_to_sheet(mappedData);
             XLSX.utils.book_append_sheet(workbook, worksheet, `${card.name}`);
-            XLSX.utils.sheet_add_aoa(worksheet, [["Id карточки", "Имя карточки"]], { origin: "A1" });
+            XLSX.utils.sheet_add_aoa(worksheet, [["Имя компании", "Имя поля", "Значение поля"]], { origin: "A1" });
+            worksheet["!cols"] = [...mappedData.map((data) => {
+                return {
+                    ...data,
+                    wch: 20,
+                }
+            })].filter((c) => c.wch);
         });
-
-        XLSX.writeFileXLSX(workbook, "Report.xlsx");
-
+        XLSX.writeFileXLSX(workbook, "Компании.xlsx");
     }
 
     return (<div className='flex flex-col dark:bg-slate-900 dark:text-white'>
-        {isModal && <Modal onToggleAddForm={onToggleAddForm} title={'Экспорт данных'}>
-            <div className='flex justify-start items-center gap-5'>
-                <Button type="button" variant="contained" color='success' onClick={onSaveToExcel}>Сохранить</Button>
-            </div>
-        </Modal>}
         <div className='w-[95%] mx-auto '>
             <div className='grid grid-cols-[25%_1fr] gap-20 p-2 min-h-screen '>
                 <div className="flex flex-col gap-5 ">
@@ -117,7 +119,7 @@ const MainPage = () => {
                         <SearchBox onSearch={onSearch} searchValue={searchValue} />
                         <div className='flex justify-between'>
                             <Link to={'/cards/create'} ><Button variant="contained" color="success" className='min-w-full' size='medium'>Добавить</Button></Link>
-                            <Button variant="contained" color="info" className='min-w-full' size='medium' onClick={() => setIsModal(!isModal)}>Экспорт в Excel</Button>
+                            <Button variant="contained" color="info" className='min-w-full' size='medium' onClick={onSaveToExcel}>Экспорт в Excel</Button>
                             <Button variant="contained" color="error" className='min-w-full' size='medium' onClick={onDeleteAllCards}>Удалить все</Button>
                         </div>
                     </div>
