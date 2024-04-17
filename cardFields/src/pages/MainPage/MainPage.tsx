@@ -1,5 +1,5 @@
 
-import { Button, IconButton } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { CardItems } from '../../components/CardItems/CardItems';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
@@ -15,6 +15,7 @@ import NightlightIcon from '@mui/icons-material/Nightlight';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 
 import * as XLSX from "xlsx";
+import { Modal } from '../../components/Modal/Modal';
 
 export type OnLoadData = (payload: DataCard[]) => void;
 
@@ -22,9 +23,11 @@ const MainPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [isProfileMenu, setIsProfileMenu] = useState(false);
+    const [isModal, setIsModal] = useState(false);
     const { state, dispatch } = useCustomContext(AppContext);
     const [searchValue, setSearchValue] = useState('');
     const filledCards = state.cards.filter((card) => card.name.includes(searchValue));
+
     const onSearch = (value: string) => {
         setSearchValue(value);
     }
@@ -96,9 +99,17 @@ const MainPage = () => {
         });
         XLSX.writeFileXLSX(workbook, "Компании.xlsx");
     }
-
+    const onChangeModalStatus = () => setIsModal(!isModal);
     return (<div className='flex flex-col dark:bg-slate-900 dark:text-white'>
+
         <div className='w-[95%] mx-auto '>
+            {isModal && (<Modal onChangeModalStatus={onChangeModalStatus} title='Потверждение'>
+                <Typography component='h2' variant='h5' textAlign='center'>Вы уверены?</Typography>
+                <div className='flex justify-center gap-10 mt-5'>
+                    <Button onClick={onDeleteAllCards} type="button" color="success" variant="contained">Да</Button>
+                    <Button type="button" color="error" variant="contained" size='large' onClick={onChangeModalStatus}>Нет</Button>
+                </div>
+            </Modal>)}
             <div className='grid grid-cols-[25%_1fr] gap-20 p-2 min-h-screen '>
                 <div className="flex flex-col gap-5 ">
                     <div className='flex justify-between gap-1 '>
@@ -120,7 +131,7 @@ const MainPage = () => {
                         <div className='flex justify-between'>
                             <Link to={'/cards/create'} ><Button variant="contained" color="success" className='min-w-full' size='medium'>Добавить</Button></Link>
                             <Button variant="contained" color="info" className='min-w-full' size='medium' onClick={onSaveToExcel}>Экспорт в Excel</Button>
-                            <Button variant="contained" color="error" className='min-w-full' size='medium' onClick={onDeleteAllCards}>Удалить все</Button>
+                            <Button variant="contained" color="error" className='min-w-full' size='medium' onClick={() => setIsModal(!isModal)}>Удалить все</Button>
                         </div>
                     </div>
 
